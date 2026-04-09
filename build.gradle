@@ -25,6 +25,11 @@ sourceSets {
 repositories {
     mavenLocal()
     mavenCentral()
+
+    flatDir {
+        dir 'libs'
+    }
+
     maven {
         name = 'GTCEu Maven'
         url = 'https://maven.gtceu.com'
@@ -157,6 +162,11 @@ dependencies {
     // lombok
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    //Powah and dependencies
+    modImplementation("me.shedaniel:cloth-config-${cloth_version}-forge")
+    modImplementation("me.shedaniel:architectury-${architectury_version}-forge")
+    modImplementation("owmii.powah:Powah-${powah_version}")
 }
 
 // See com.example.examplemod.mixin.DummyMixin for information about mixins

@@ -6,8 +6,6 @@
   "mixins": [
     "UnifyFluidTanksMixin"
   ],
-  "client": [
-  ],
   "injectors": {
     "defaultRequire": 1
   }
