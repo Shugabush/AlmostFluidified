@@ -4,13 +4,13 @@ import com.gregtechceu.gtceu.api.addon.GTAddon;
 import com.gregtechceu.gtceu.api.addon.IGTAddon;
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 
-import mekanism.common.registration.impl.FluidDeferredRegister;
-import mekanism.common.registration.impl.FluidRegistryObject;
-import mekanism.common.registries.MekanismFluids;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
+
+import mekanism.common.registration.impl.FluidDeferredRegister;
+import mekanism.common.registration.impl.FluidRegistryObject;
 
 import java.util.function.Consumer;
 
@@ -42,6 +42,7 @@ public class RAIntegration implements IGTAddon {
     }
 
     FluidRegistryObject<FluidDeferredRegister.MekanismFluidType, ForgeFlowingFluid.Source, ForgeFlowingFluid.Flowing, LiquidBlock, BucketItem> steam;
+
     @Override
     public void registerElements() {
         // CustomElements.init();
