@@ -5,6 +5,7 @@ import com.gregtechceu.gtceu.common.machine.multiblock.steam.LargeBoilerMachine;
 import net.minecraftforge.fluids.FluidStack;
 
 import mekanism.common.registries.MekanismFluids;
+import net.minecraftforge.fml.ModList;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -18,6 +19,11 @@ public class UnifyMultiblockSteamOutputMixin {
                         target = "Lcom/gregtechceu/gtceu/api/recipe/ingredient/FluidIngredient;of(Lnet/minecraftforge/fluids/FluidStack;)Lcom/gregtechceu/gtceu/api/recipe/ingredient/FluidIngredient;"),
                index = 0)
     private FluidStack unifySteam(FluidStack stack) {
+
+        // If Mekanism isn't loaded, return the original stack
+        if (!ModList.get().isLoaded("mekanism")) {
+            return stack;
+        }
         return new FluidStack(MekanismFluids.STEAM.getFluid(), stack.getAmount());
     }
 }
