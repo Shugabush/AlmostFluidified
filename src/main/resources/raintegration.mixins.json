@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.shugabrush.raintegration.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "mixins": [
+    "UnifyGregTechMaterialsMixin",
+    "UnifyPowahReactorMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
