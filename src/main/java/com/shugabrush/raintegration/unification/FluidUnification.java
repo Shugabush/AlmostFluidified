@@ -1,14 +1,13 @@
 package com.shugabrush.raintegration.unification;
 
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.material.Fluid;
 
 public class FluidUnification {
 
-    public static FluidStack getUnifiedFluid(FluidStack fluid) {
-        if (fluid.getTag().toString() == "forge:steam") {
-
-        }
-
-        return fluid;
+    public static Fluid getFluid(ResourceLocation resourceLocation) {
+        Fluid returnValue = BuiltInRegistries.FLUID.get(resourceLocation);
+        return returnValue;
     }
 }
