@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 @Mixin(value = LargeBoilerMachine.class, remap = false)
 public class UnifyMultiblockSteamOutputMixin {
 
-    // Make multiblock steam boilers produce Mekanism's Liquid Steam
+    // Make multiblock steam boilers produce Configured Liquid Steam
     @ModifyArg(method = "updateCurrentTemperature",
                at = @At(value = "INVOKE",
                         target = "Lcom/gregtechceu/gtceu/api/recipe/ingredient/FluidIngredient;of(Lnet/minecraftforge/fluids/FluidStack;)Lcom/gregtechceu/gtceu/api/recipe/ingredient/FluidIngredient;"),

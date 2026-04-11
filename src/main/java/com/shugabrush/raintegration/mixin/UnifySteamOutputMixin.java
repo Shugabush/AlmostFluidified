@@ -12,11 +12,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 @Mixin(value = SteamBoilerMachine.class, remap = false)
 public abstract class UnifySteamOutputMixin {
 
-    /**
-     * @return
-     * @author Shugabrush
-     * @reason Change some of GregTech's Fluid access to Mekanism's fluids
-     */
+    // Make steam boilers produce Configured Liquid Steam
     @ModifyArg(method = "updateCurrentTemperature",
                at = @At(value = "INVOKE",
                         target = "Lcom/gregtechceu/gtceu/api/machine/trait/NotifiableFluidTank;fillInternal(Lnet/minecraftforge/fluids/FluidStack;Lnet/minecraftforge/fluids/capability/IFluidHandler$FluidAction;)I"),
