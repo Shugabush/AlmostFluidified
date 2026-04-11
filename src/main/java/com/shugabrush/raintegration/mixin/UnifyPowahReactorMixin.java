@@ -1,10 +1,10 @@
 package com.shugabrush.raintegration.mixin;
 
-import com.shugabrush.raintegration.ConfigHolder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import com.shugabrush.raintegration.ConfigHolder;
 import dev.architectury.hooks.item.ItemStackHooks;
 import dev.architectury.registry.fuel.FuelRegistry;
 import org.apache.commons.lang3.tuple.Pair;
@@ -41,7 +41,9 @@ public class UnifyPowahReactorMixin {
 
     // If the item has the configured uraninite tag, return Powah's uraninite
     // so it works with the processFuel() method
-    @Redirect(method = "processFuel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getItem()Lnet/minecraft/world/item/Item;"))
+    @Redirect(method = "processFuel",
+              at = @At(value = "INVOKE",
+                       target = "Lnet/minecraft/world/item/ItemStack;getItem()Lnet/minecraft/world/item/Item;"))
     private Item unifiedUraninite(ItemStack originalValue) {
         if (originalValue.getTags().toList().contains(ConfigHolder.instance.machineConfigs.getPowahReactorFuel())) {
             return Itms.URANINITE.get();

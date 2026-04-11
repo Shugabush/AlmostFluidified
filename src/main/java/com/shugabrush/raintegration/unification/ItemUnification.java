@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
 public class ItemUnification {
+
     public static Item getItem(ResourceLocation resourceLocation) {
         return BuiltInRegistries.ITEM.get(resourceLocation);
     }
