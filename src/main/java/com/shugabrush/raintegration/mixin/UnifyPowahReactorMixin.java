@@ -22,7 +22,7 @@ public class UnifyPowahReactorMixin {
 
     /**
      * @author Shugabrush
-     * @reason Allow any uraninite dust to be inserted into the fuel slot
+     * @reason Allow items with the configured tag to be inserted into the fuel slot
      */
     @Overwrite
     public boolean canInsert(int slot, ItemStack stack) {
