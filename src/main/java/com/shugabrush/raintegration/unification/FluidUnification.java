@@ -7,7 +7,6 @@ import net.minecraft.world.level.material.Fluid;
 public class FluidUnification {
 
     public static Fluid getFluid(ResourceLocation resourceLocation) {
-        Fluid returnValue = BuiltInRegistries.FLUID.get(resourceLocation);
-        return returnValue;
+        return BuiltInRegistries.FLUID.get(resourceLocation);
     }
 }

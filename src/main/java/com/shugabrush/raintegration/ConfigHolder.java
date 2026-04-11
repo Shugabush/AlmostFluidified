@@ -1,6 +1,10 @@
 package com.shugabrush.raintegration;
 
+import com.shugabrush.raintegration.unification.ItemUnification;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.material.Fluid;
 
 import com.shugabrush.raintegration.unification.FluidUnification;
@@ -34,18 +38,31 @@ public class ConfigHolder {
         public String boilerFluidOutput = "gtceu:steam";
         private Fluid boilerFluid;
 
+        @Configurable
+        @Configurable.Comment({ "The fuel tag that you insert into powah's reactors (if powah is installed).",
+                "Default: forge:uraninite" })
+        public String powahReactorFuelInput = "forge:uraninite";
+
+        private TagKey<Item> powahReactorFuel;
+
         public Fluid getBoilerFluid() {
             if (boilerFluid == null) {
                 // Doing this in init() is before Fluids are properly registered, so we'll have to check each time here.
                 try {
-                    String[] boilerResourcePath = boilerFluidOutput.split(":");
                     boilerFluid = FluidUnification
-                            .getFluid(new ResourceLocation(boilerResourcePath[0], boilerResourcePath[1]));
+                            .getFluid(new ResourceLocation(boilerFluidOutput));
                 } catch (Exception e) {
                     boilerFluid = FluidUnification.getFluid(new ResourceLocation("gtceu", "steam"));
                 }
             }
             return boilerFluid;
+        }
+
+        public TagKey<Item> getPowahReactorFuel() {
+            if (powahReactorFuel == null) {
+                powahReactorFuel = ItemTags.create(new ResourceLocation(powahReactorFuelInput));
+            }
+            return powahReactorFuel;
         }
     }
 }
