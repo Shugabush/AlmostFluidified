@@ -3,6 +3,7 @@
   "package": "com.shugabrush.raintegration.mixin",
   "compatibilityLevel": "JAVA_17",
   "minVersion": "0.8",
+  "refmap": "mixins.raintegration.refmap.json",
   "mixins": [
     "UnifySteamOutputMixin",
     "UnifyMultiblockSteamOutputMixin",
