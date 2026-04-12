@@ -1,8 +1,6 @@
 package com.shugabrush.raintegration;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -40,9 +38,7 @@ public class RAIntegration {
         });
     }
 
-    private void clientSetup(final FMLClientSetupEvent event) {
-
-    }
+    private void clientSetup(final FMLClientSetupEvent event) {}
 
     /**
      * Create a ResourceLocation in the format "modid:path"
