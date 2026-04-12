@@ -13,12 +13,14 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(RAIntegration.MOD_ID)
 @SuppressWarnings("removal")
-public class RAIntegration {
+public class RAIntegration
+{
 
     public static final String MOD_ID = "raintegration";
     public static final Logger LOGGER = LogManager.getLogger();
 
-    public RAIntegration() {
+    public RAIntegration()
+    {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         modEventBus.addListener(this::commonSetup);
@@ -32,8 +34,10 @@ public class RAIntegration {
         ConfigHolder.init();
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
+    private void commonSetup(final FMLCommonSetupEvent event)
+    {
+        event.enqueueWork(() ->
+        {
 
         });
     }
@@ -46,7 +50,8 @@ public class RAIntegration {
      * @param path
      * @return ResourceLocation with the namespace of your mod
      */
-    public static ResourceLocation id(String path) {
+    public static ResourceLocation id(String path)
+{
         return new ResourceLocation(MOD_ID, path);
     }
 }

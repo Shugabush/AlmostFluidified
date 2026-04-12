@@ -1,9 +1,6 @@
 package com.shugabrush.raintegration;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.material.Fluid;
 
 import com.shugabrush.raintegration.unification.FluidUnification;
@@ -13,12 +10,14 @@ import dev.toma.configuration.config.Configurable;
 import dev.toma.configuration.config.format.ConfigFormats;
 
 @Config(id = RAIntegration.MOD_ID)
-public class ConfigHolder {
-
+public class ConfigHolder
+{
     public static ConfigHolder instance;
 
-    public static void init() {
-        if (instance == null) {
+    public static void init()
+    {
+        if (instance == null)
+        {
             instance = Configuration.registerConfig(ConfigHolder.class, ConfigFormats.yaml()).getConfigInstance();
         }
     }
@@ -26,7 +25,8 @@ public class ConfigHolder {
     @Configurable
     public FluidConfigs fluidConfigs = new FluidConfigs();
 
-    public static class FluidConfigs {
+    public static class FluidConfigs
+{
 
         @Configurable
         @Configurable.Comment({ "The fluid that's outputted by steam boilers.",
@@ -40,21 +40,27 @@ public class ConfigHolder {
         public String experience = "industrialforegoing:essence";
         private Fluid experienceFluid;
 
-        public Fluid getBoilerFluid() {
-            if (boilerFluid == null) {
+        public Fluid getBoilerFluid()
+        {
+            if (boilerFluid == null)
+            {
                 // Doing this in init() is before Fluids are properly registered, so we'll have to check each time here.
-                try {
+                try
+                {
                     boilerFluid = FluidUnification
                             .getFluid(new ResourceLocation(boilerFluidOutput));
-                } catch (Exception e) {
+                } catch (Exception e)
+                {
                     boilerFluid = FluidUnification.getFluid(new ResourceLocation("gtceu:steam"));
                 }
             }
             return boilerFluid;
         }
 
-        public Fluid getExperienceFluid() {
-            if (experienceFluid == null) {
+        public Fluid getExperienceFluid()
+        {
+            if (experienceFluid == null)
+            {
                 experienceFluid = FluidUnification.getFluid(new ResourceLocation(experience));
             }
             return experienceFluid;

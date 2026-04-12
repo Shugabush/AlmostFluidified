@@ -147,6 +147,9 @@ dependencies {
     modRuntimeOnly("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
     modRuntimeOnly("curse.maven:jade-324717:5390389")
 
+    // Almost Unified
+    modImplementation("com.almostreliable.unified:almostunified-forge-${minecraft_version}-${almost_unified_version}")
+
     // GregTech and dependencies
     modImplementation("com.gregtechceu.gtceu:gtceu-${minecraft_version}:${gtceu_version}:slim") { transitive = false }
     modImplementation("com.lowdragmc.ldlib:ldlib-forge-${minecraft_version}:${ldlib_version}") { transitive = false }
@@ -177,8 +180,8 @@ dependencies {
     modImplementation("com.hrznstudio.titanium:titanium-${minecraft_version}-${titanium_version}")
     modImplementation("com.buuz135.industrial:industrial-foregoing-${minecraft_version}-${industrial_foregoing_version}")
 
-    // Almost Unified
-    modImplementation("com.almostreliable.unified:almostunified-forge-${minecraft_version}-${almost_unified_version}")
+    // Stargate Journey
+    modImplementation("net.povstalec.sgjourney:Stargate Journey-${minecraft_version}-${stargate_journey_version}")
 }
 
 // See com.example.examplemod.mixin.DummyMixin for information about mixins
