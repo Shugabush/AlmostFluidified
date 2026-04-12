@@ -61,6 +61,10 @@ public class UnifyPowahReactorMixin extends AbstractEnergyProvider<ReactorBlock>
         return true;
     }
 
+    /**
+     * @author Shugabrush
+     * @reason
+     */
     @Overwrite
     private boolean processFuel(Level world) {
         boolean flag = false;
