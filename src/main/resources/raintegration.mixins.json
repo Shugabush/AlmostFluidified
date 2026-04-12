@@ -11,7 +11,8 @@
     "UnifySophisticatedCoreXP",
     "industrialforegoing.UnifyIndustrialForegoingXP",
     "industrialforegoing.UnifyIndustrialForegoingRubber",
-    "industrialforegoing.UnifyIndustrialForegoingJEI"
+    "industrialforegoing.UnifyIndustrialForegoingJEI",
+    "UnifySGJourneyCrystallizerNaquadah"
   ],
   "injectors": {
     "defaultRequire": 1
