@@ -63,7 +63,7 @@ public class UnifyPowahReactorMixin extends AbstractEnergyProvider<ReactorBlock>
 
     /**
      * @author Shugabrush
-     * @reason
+     * @reason Process the configured fuel item
      */
     @Overwrite
     private boolean processFuel(Level world) {
