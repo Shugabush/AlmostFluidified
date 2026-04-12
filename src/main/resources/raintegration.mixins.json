@@ -9,7 +9,9 @@
     "UnifyMultiblockSteamOutputMixin",
     "UnifyPowahReactorMixin",
     "UnifySophisticatedCoreXP",
-    "industrialforegoing.UnifyIndustrialForegoingXP"
+    "industrialforegoing.UnifyIndustrialForegoingXP",
+    "industrialforegoing.UnifyIndustrialForegoingRubber",
+    "industrialforegoing.UnifyIndustrialForegoingJEI"
   ],
   "injectors": {
     "defaultRequire": 1

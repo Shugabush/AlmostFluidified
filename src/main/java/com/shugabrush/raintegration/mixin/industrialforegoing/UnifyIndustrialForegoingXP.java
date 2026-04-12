@@ -1,11 +1,12 @@
 package com.shugabrush.raintegration.mixin.industrialforegoing;
 
-import com.buuz135.industrial.module.ModuleCore;
-import com.hrznstudio.titanium.component.fluid.FluidTankComponent;
-import com.shugabrush.raintegration.ConfigHolder;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+
+import com.buuz135.industrial.module.ModuleCore;
+import com.hrznstudio.titanium.component.fluid.FluidTankComponent;
+import com.shugabrush.raintegration.ConfigHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -33,6 +34,7 @@ public class UnifyIndustrialForegoingXP extends FluidTank {
         }
         return tankAction.canFill() ? super.fill(resource, action) : 0;
     }
+
     @Overwrite
     public int fillForced(FluidStack resource, FluidAction action) {
         Fluid experienceFluid = ConfigHolder.instance.fluidConfigs.getExperienceFluid();
@@ -67,7 +69,7 @@ public class UnifyIndustrialForegoingXP extends FluidTank {
         }
         return stack;
     }
-    
+
     @Overwrite
     public FluidStack drainForced(FluidStack resource, FluidAction action) {
         Fluid experienceFluid = ConfigHolder.instance.fluidConfigs.getExperienceFluid();

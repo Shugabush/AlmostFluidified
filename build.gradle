@@ -166,16 +166,19 @@ dependencies {
     //modImplementation("teamcofh.cofhcore:cofh-core-${cofh_core_version}")
 
     // Mekanism
-    modImplementation("mekanism.common:Mekanism-1.20.1-${mekanism_version}")
+    modImplementation("mekanism.common:Mekanism-${minecraft_version}-${mekanism_version}")
 
     // Sophisticated Mods
-    modImplementation("net.p3pp3rf1y.sophisticatedcore:sophisticatedcore-1.20.1-${sophisticated_core_version}")
-    modImplementation("net.p3pp3rf1y.sophisticatedstorage:sophisticatedstorage-1.20.1-${sophisticated_storage_version}")
-    modImplementation("net.p3pp3rf1y.sophisticatedbackpacks:sophisticatedbackpacks-1.20.1-${sophisticated_backpacks_version}")
+    modImplementation("net.p3pp3rf1y.sophisticatedcore:sophisticatedcore-${minecraft_version}-${sophisticated_core_version}")
+    modImplementation("net.p3pp3rf1y.sophisticatedstorage:sophisticatedstorage-${minecraft_version}-${sophisticated_storage_version}")
+    modImplementation("net.p3pp3rf1y.sophisticatedbackpacks:sophisticatedbackpacks-${minecraft_version}-${sophisticated_backpacks_version}")
 
     // Industrial Foregoing and dependencies
-    modImplementation("com.hrznstudio.titanium:titanium-1.20.1-${titanium_version}")
-    modImplementation("com.buuz135.industrial:industrial-foregoing-1.20.1-${industrial_foregoing_version}")
+    modImplementation("com.hrznstudio.titanium:titanium-${minecraft_version}-${titanium_version}")
+    modImplementation("com.buuz135.industrial:industrial-foregoing-${minecraft_version}-${industrial_foregoing_version}")
+
+    // Almost Unified
+    modImplementation("com.almostreliable.unified:almostunified-forge-${minecraft_version}-${almost_unified_version}")
 }
 
 // See com.example.examplemod.mixin.DummyMixin for information about mixins
