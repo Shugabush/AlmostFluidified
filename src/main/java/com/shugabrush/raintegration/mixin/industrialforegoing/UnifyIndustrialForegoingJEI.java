@@ -22,12 +22,12 @@ public class UnifyIndustrialForegoingJEI {
                at = @At(value = "INVOKE",
                         target = "Lmezz/jei/api/registration/IRecipeRegistration;addRecipes(Lmezz/jei/api/recipe/RecipeType;Ljava/util/List;)V"),
                index = 1)
-    List<MachineProduceWrapper> getWrappers(List<MachineProduceWrapper> wrappers) {
+    <T> List<T> getWrappers(List<T> wrappers) {
         if (!ModList.get().isLoaded("almostunified")) return wrappers;
 
         for (int i = 0; i < wrappers.size(); ++i) {
             try {
-                MachineProduceWrapper wrapper = wrappers.get(i);
+                MachineProduceWrapper wrapper = (MachineProduceWrapper)wrappers.get(i);
                 Ingredient outputItems = wrapper.getOutputItem();
                 if (outputItems != null) {
                     ItemStack[] items = outputItems.getItems();
@@ -38,7 +38,9 @@ public class UnifyIndustrialForegoingJEI {
                             item = new ItemStack(ItemUnification.getItem(AlmostUnified.getRuntime().getReplacementMap()
                                     .get().getReplacementForItem(rubberLocation)));
                         }
-                        wrapper.getOutputItem().getItems()[j] = item;
+                        if (item != null) {
+                            wrapper.getOutputItem().getItems()[j] = item;
+                        }
                     }
                 }
             } catch (Exception e) {
