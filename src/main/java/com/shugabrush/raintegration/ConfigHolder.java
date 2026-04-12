@@ -39,6 +39,17 @@ public class ConfigHolder
                 "Default: industrialforegoing:essence" })
         public String experience = "industrialforegoing:essence";
         private Fluid experienceFluid;
+        @Configurable
+        @Configurable.Comment({ "The fluid that SGJourney's crystallizer uses.",
+            "Default: sgjourney:liquid_naquadah"})
+        public String crystallizerFluidInput = "sgjourney:liquid_naquadah";
+        private Fluid crystallizerFluid;
+
+        @Configurable
+        @Configurable.Comment({ "The fluid that SGJourney's advanced crystallizer uses.",
+            "Default: sgjourney:liquid_naquadah"})
+        public String advancedCrystallizerFluidInput = "sgjourney:heavy_liquid_naquadah";
+        private Fluid advancedCrystallizerFluid;
 
         public Fluid getBoilerFluid()
         {
@@ -64,6 +75,24 @@ public class ConfigHolder
                 experienceFluid = FluidUnification.getFluid(new ResourceLocation(experience));
             }
             return experienceFluid;
+        }
+
+        public Fluid getCrystallizerFluid()
+        {
+            if (crystallizerFluid == null)
+            {
+                crystallizerFluid = FluidUnification.getFluid(new ResourceLocation(crystallizerFluidInput));
+            }
+            return crystallizerFluid;
+        }
+
+        public Fluid getAdvancedCrystallizerFluid()
+        {
+            if (advancedCrystallizerFluid == null)
+            {
+                advancedCrystallizerFluid = FluidUnification.getFluid(new ResourceLocation(advancedCrystallizerFluidInput));
+            }
+            return advancedCrystallizerFluid;
         }
     }
 }
