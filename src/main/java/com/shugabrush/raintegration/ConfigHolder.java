@@ -24,26 +24,7 @@ public class ConfigHolder {
     }
 
     @Configurable
-    public ItemConfigs itemConfigs = new ItemConfigs();
-
-    @Configurable
     public FluidConfigs fluidConfigs = new FluidConfigs();
-
-    public static class ItemConfigs {
-
-        @Configurable
-        @Configurable.Comment({ "The fuel tag that you insert into powah's reactors (if powah is installed).",
-                "Default: forge:uraninite" })
-        public String powahReactorFuelInput = "forge:uraninite";
-        private TagKey<Item> powahReactorFuel;
-
-        public TagKey<Item> getPowahReactorFuel() {
-            if (powahReactorFuel == null) {
-                powahReactorFuel = ItemTags.create(new ResourceLocation(powahReactorFuelInput));
-            }
-            return powahReactorFuel;
-        }
-    }
 
     public static class FluidConfigs {
 

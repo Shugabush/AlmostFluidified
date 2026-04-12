@@ -1,6 +1,8 @@
 package com.shugabrush.raintegration.mixin;
 
+import com.shugabrush.raintegration.unification.ItemUnification;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -40,11 +42,20 @@ public class UnifyPowahReactorMixin extends AbstractEnergyProvider<ReactorBlock>
         return 64;
     }
 
+    private boolean isUnifiedUraninite(Item item) {
+        return item == ItemUnification.getItem("powah:uraninite") ||
+                item == ItemUnification.getItem("powah:uraninite_block");
+    }
+
+    private boolean isUnifiedUraninite(ItemStack stack) {
+        return isUnifiedUraninite(stack.getItem());
+    }
+
     // Allow items with the configured tag to be inserted into the fuel slot
     @Override
     public boolean canInsert(int slot, ItemStack stack) {
         if (slot == 1) {
-            return stack.getTags().toList().contains(ConfigHolder.instance.itemConfigs.getPowahReactorFuel());
+            return isUnifiedUraninite(stack);
         } else if (slot == 2) {
             return FuelRegistry.get(stack) > 0 && !ItemStackHooks.hasCraftingRemainingItem(stack);
         } else if (slot == 3) {
@@ -70,7 +81,7 @@ public class UnifyPowahReactorMixin extends AbstractEnergyProvider<ReactorBlock>
         boolean flag = false;
         if (this.fuel.getTicks() <= 900) {
             ItemStack stack = this.inv.getStackInSlot(1);
-            if (stack.getTags().toList().contains(ConfigHolder.instance.itemConfigs.getPowahReactorFuel())) {
+            if (isUnifiedUraninite(stack)) {
                 this.fuel.add(100);
                 this.baseTemp = 700;
                 stack.shrink(1);
