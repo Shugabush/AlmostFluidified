@@ -64,11 +64,6 @@ repositories {
         }
     }
     maven {
-        // EMI
-		name = "TerraformersMC"
-		url = "https://maven.terraformersmc.com/"
-	}
-    maven {
         url = "https://thedarkcolour.github.io/KotlinForForge/"
     }
 
@@ -146,11 +141,10 @@ dependencies {
     // Mixin
     annotationProcessor('org.spongepowered:mixin:0.8.5:processor')
 
-    // JEI, EMI, Jade
+    // JEI, Jade
     modCompileOnly("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
     modCompileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
     modRuntimeOnly("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
-    modRuntimeOnly("dev.emi:emi-forge:${emi_version}+${minecraft_version}")
     modRuntimeOnly("curse.maven:jade-324717:5390389")
 
     // GregTech and dependencies
@@ -174,6 +168,14 @@ dependencies {
     // Mekanism
     modImplementation("mekanism.common:Mekanism-1.20.1-${mekanism_version}")
 
+    // Sophisticated Mods
+    modImplementation("net.p3pp3rf1y.sophisticatedcore:sophisticatedcore-1.20.1-${sophisticated_core_version}")
+    modImplementation("net.p3pp3rf1y.sophisticatedstorage:sophisticatedstorage-1.20.1-${sophisticated_storage_version}")
+    modImplementation("net.p3pp3rf1y.sophisticatedbackpacks:sophisticatedbackpacks-1.20.1-${sophisticated_backpacks_version}")
+
+    // Industrial Foregoing and dependencies
+    modImplementation("com.hrznstudio.titanium:titanium-1.20.1-${titanium_version}")
+    modImplementation("com.buuz135.industrial:industrial-foregoing-1.20.1-${industrial_foregoing_version}")
 }
 
 // See com.example.examplemod.mixin.DummyMixin for information about mixins

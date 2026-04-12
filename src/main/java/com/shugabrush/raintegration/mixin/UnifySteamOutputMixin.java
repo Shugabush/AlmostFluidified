@@ -18,6 +18,6 @@ public abstract class UnifySteamOutputMixin {
                         target = "Lcom/gregtechceu/gtceu/api/machine/trait/NotifiableFluidTank;fillInternal(Lnet/minecraftforge/fluids/FluidStack;Lnet/minecraftforge/fluids/capability/IFluidHandler$FluidAction;)I"),
                index = 0)
     private FluidStack unifySteam(FluidStack stack) {
-        return new FluidStack(ConfigHolder.instance.machineConfigs.getBoilerFluid(), stack.getAmount());
+        return new FluidStack(ConfigHolder.instance.fluidConfigs.getBoilerFluid(), stack.getAmount());
     }
 }

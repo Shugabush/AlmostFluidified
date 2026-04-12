@@ -7,7 +7,9 @@
   "mixins": [
     "UnifySteamOutputMixin",
     "UnifyMultiblockSteamOutputMixin",
-    "UnifyPowahReactorMixin"
+    "UnifyPowahReactorMixin",
+    "UnifySophisticatedCoreXP",
+    "industrialforegoing.UnifyIndustrialForegoingXP"
   ],
   "injectors": {
     "defaultRequire": 1

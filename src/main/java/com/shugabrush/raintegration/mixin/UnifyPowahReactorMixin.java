@@ -44,7 +44,7 @@ public class UnifyPowahReactorMixin extends AbstractEnergyProvider<ReactorBlock>
     @Override
     public boolean canInsert(int slot, ItemStack stack) {
         if (slot == 1) {
-            return stack.getTags().toList().contains(ConfigHolder.instance.machineConfigs.getPowahReactorFuel());
+            return stack.getTags().toList().contains(ConfigHolder.instance.itemConfigs.getPowahReactorFuel());
         } else if (slot == 2) {
             return FuelRegistry.get(stack) > 0 && !ItemStackHooks.hasCraftingRemainingItem(stack);
         } else if (slot == 3) {
@@ -70,7 +70,7 @@ public class UnifyPowahReactorMixin extends AbstractEnergyProvider<ReactorBlock>
         boolean flag = false;
         if (this.fuel.getTicks() <= 900) {
             ItemStack stack = this.inv.getStackInSlot(1);
-            if (stack.getTags().toList().contains(ConfigHolder.instance.machineConfigs.getPowahReactorFuel())) {
+            if (stack.getTags().toList().contains(ConfigHolder.instance.itemConfigs.getPowahReactorFuel())) {
                 this.fuel.add(100);
                 this.baseTemp = 700;
                 stack.shrink(1);

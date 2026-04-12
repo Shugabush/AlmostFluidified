@@ -21,15 +21,31 @@ public class ConfigHolder {
         if (instance == null) {
             instance = Configuration.registerConfig(ConfigHolder.class, ConfigFormats.yaml()).getConfigInstance();
         }
-        instance.machineConfigs.init();
     }
 
     @Configurable
-    public MachineConfigs machineConfigs = new MachineConfigs();
+    public ItemConfigs itemConfigs = new ItemConfigs();
 
-    public static class MachineConfigs {
+    @Configurable
+    public FluidConfigs fluidConfigs = new FluidConfigs();
 
-        public void init() {}
+    public static class ItemConfigs {
+
+        @Configurable
+        @Configurable.Comment({ "The fuel tag that you insert into powah's reactors (if powah is installed).",
+                "Default: forge:uraninite" })
+        public String powahReactorFuelInput = "forge:uraninite";
+        private TagKey<Item> powahReactorFuel;
+
+        public TagKey<Item> getPowahReactorFuel() {
+            if (powahReactorFuel == null) {
+                powahReactorFuel = ItemTags.create(new ResourceLocation(powahReactorFuelInput));
+            }
+            return powahReactorFuel;
+        }
+    }
+
+    public static class FluidConfigs {
 
         @Configurable
         @Configurable.Comment({ "The fluid that's outputted by steam boilers.",
@@ -38,11 +54,10 @@ public class ConfigHolder {
         private Fluid boilerFluid;
 
         @Configurable
-        @Configurable.Comment({ "The fuel tag that you insert into powah's reactors (if powah is installed).",
-                "Default: forge:uraninite" })
-        public String powahReactorFuelInput = "forge:uraninite";
-
-        private TagKey<Item> powahReactorFuel;
+        @Configurable.Comment({ "The experience to use for experience unification",
+                "Default: industrialforegoing:essence" })
+        public String experience = "industrialforegoing:essence";
+        private Fluid experienceFluid;
 
         public Fluid getBoilerFluid() {
             if (boilerFluid == null) {
@@ -51,17 +66,17 @@ public class ConfigHolder {
                     boilerFluid = FluidUnification
                             .getFluid(new ResourceLocation(boilerFluidOutput));
                 } catch (Exception e) {
-                    boilerFluid = FluidUnification.getFluid(new ResourceLocation("gtceu", "steam"));
+                    boilerFluid = FluidUnification.getFluid(new ResourceLocation("gtceu:steam"));
                 }
             }
             return boilerFluid;
         }
 
-        public TagKey<Item> getPowahReactorFuel() {
-            if (powahReactorFuel == null) {
-                powahReactorFuel = ItemTags.create(new ResourceLocation(powahReactorFuelInput));
+        public Fluid getExperienceFluid() {
+            if (experienceFluid == null) {
+                experienceFluid = FluidUnification.getFluid(new ResourceLocation(experience));
             }
-            return powahReactorFuel;
+            return experienceFluid;
         }
     }
 }
