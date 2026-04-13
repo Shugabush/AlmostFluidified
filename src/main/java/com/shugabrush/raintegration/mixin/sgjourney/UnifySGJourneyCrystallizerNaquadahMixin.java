@@ -1,4 +1,4 @@
-package com.shugabrush.raintegration.mixin;
+package com.shugabrush.raintegration.mixin.sgjourney;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;

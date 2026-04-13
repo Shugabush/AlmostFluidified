@@ -1,4 +1,4 @@
-package com.shugabrush.raintegration.mixin;
+package com.shugabrush.raintegration.mixin.powah;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;

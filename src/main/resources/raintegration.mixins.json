@@ -5,15 +5,15 @@
   "minVersion": "0.8",
   "refmap": "mixins.raintegration.refmap.json",
   "mixins": [
-    "UnifySteamOutputMixin",
-    "UnifyMultiblockSteamOutputMixin",
-    "UnifyPowahReactorMixin",
-    "UnifySophisticatedCoreXPMixin",
+    "gtceu.UnifySteamOutputMixin",
+    "gtceu.UnifyMultiblockSteamOutputMixin",
+    "powah.UnifyPowahReactorMixin",
+    "sophisticatedcore.UnifySophisticatedCoreXPMixin",
     "industrialforegoing.UnifyIndustrialForegoingXP",
     "industrialforegoing.UnifyIndustrialForegoingRubber",
     "industrialforegoing.UnifyIndustrialForegoingJEI",
-    "UnifySGJourneyCrystallizerNaquadahMixin",
-    "FluidTagLoaderMixin"
+    "sgjourney.UnifySGJourneyCrystallizerNaquadahMixin",
+    "almostunified.FluidTagLoaderMixin"
   ],
   "injectors": {
     "defaultRequire": 1

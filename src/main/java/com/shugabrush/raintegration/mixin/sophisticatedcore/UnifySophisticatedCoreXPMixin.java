@@ -1,4 +1,4 @@
-package com.shugabrush.raintegration.mixin;
+package com.shugabrush.raintegration.mixin.sophisticatedcore;
 
 import net.minecraft.world.level.material.Fluid;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.xppump.XpPumpUpgradeWrapper;

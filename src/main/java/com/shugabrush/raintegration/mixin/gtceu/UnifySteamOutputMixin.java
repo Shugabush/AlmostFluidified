@@ -1,4 +1,4 @@
-package com.shugabrush.raintegration.mixin;
+package com.shugabrush.raintegration.mixin.gtceu;
 
 import com.gregtechceu.gtceu.api.machine.steam.SteamBoilerMachine;
 

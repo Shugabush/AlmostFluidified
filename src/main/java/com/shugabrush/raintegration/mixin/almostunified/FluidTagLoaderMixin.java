@@ -1,4 +1,4 @@
-package com.shugabrush.raintegration.mixin;
+package com.shugabrush.raintegration.mixin.almostunified;
 
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
@@ -22,7 +22,6 @@ import java.util.Map;
 @Mixin(TagLoader.class)
 public class FluidTagLoaderMixin
 {
-
     @Shadow
     @Final
     private String directory;
