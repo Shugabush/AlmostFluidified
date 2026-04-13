@@ -1,5 +1,7 @@
 package com.shugabrush.raintegration;
 
+import com.almostreliable.unified.utils.UnifyTag;
+import com.google.gson.JsonElement;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Predicate;
 
 @Mod(MoreUnification.MOD_ID)
 @SuppressWarnings("removal")
@@ -68,6 +71,11 @@ public class MoreUnification
         fluidReplacementData = FluidReplacementData.load(tags);
     }
 
+    public static void onRecipeManagerReload(Map<ResourceLocation, JsonElement> recipes)
+    {
+
+    }
+
     public static Fluid getReplacementForFluid(ResourceLocation fluid)
     {
         return BuiltInRegistries.FLUID.get(fluidReplacementData.replacementMap().getReplacementForFluid(fluid));
@@ -76,5 +84,15 @@ public class MoreUnification
     public static Fluid getReplacementForFluid(Fluid fluid)
     {
         return getReplacementForFluid(BuiltInRegistries.FLUID.getKey(fluid));
+    }
+
+    public static UnifyTag<Fluid> getPreferredTagForFluid(ResourceLocation fluid)
+    {
+        return fluidReplacementData.replacementMap().getPreferredTagForFluid(fluid);
+    }
+
+    public static ResourceLocation getPreferredFluidForTag(UnifyTag<Fluid> tag, Predicate<ResourceLocation> fluidFilter)
+    {
+        return fluidReplacementData.replacementMap().getPreferredFluidForTag(tag, fluidFilter);
     }
 }

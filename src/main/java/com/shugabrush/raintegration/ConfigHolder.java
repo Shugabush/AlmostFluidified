@@ -68,9 +68,9 @@ public class ConfigHolder
 
         @Configurable
         @Configurable.Comment("All fluids that you want unified")
-        public String[] fluidTagValues =
+        public String[] fluids =
         {
-                "water", "lava", "oxygen", "hydrogen", "chlorine", "steam", "helium"
+                "water", "lava", "milk", "oxygen", "hydrogen", "chlorine", "steam", "helium"
         };
 
         public Set< UnifyTag< Fluid>> bakeAndValidateTags(Map< ResourceLocation, Collection< Holder< Fluid>>> tags)
@@ -90,7 +90,7 @@ public class ConfigHolder
 
             for (String tag : fluidTags)
             {
-                for (String fluid : fluidTagValues)
+                for (String fluid : fluids)
                 {
                     String replace = tag.replace("{fluid}", fluid);
                     ResourceLocation asRL = ResourceLocation.tryParse(replace);
