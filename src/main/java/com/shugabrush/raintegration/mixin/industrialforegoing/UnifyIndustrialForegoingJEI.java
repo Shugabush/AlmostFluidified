@@ -24,8 +24,6 @@ public class UnifyIndustrialForegoingJEI
     // Make recipes display their unified output items
     <T> List<T> getRecipes(List<T> recipes)
     {
-        if (!ModList.get().isLoaded("almostunified")) return recipes;
-
         for (int i = 0; i < recipes.size(); ++i)
         {
             T recipe = recipes.get(i);

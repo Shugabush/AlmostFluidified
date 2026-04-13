@@ -1,5 +1,6 @@
 package com.shugabrush.raintegration.mixin;
 
+import com.shugabrush.raintegration.MoreUnification;
 import net.minecraft.world.level.material.Fluid;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.xppump.XpPumpUpgradeWrapper;
 
@@ -9,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(value = XpPumpUpgradeWrapper.class, remap = false)
-public class UnifySophisticatedCoreXP
+public class UnifySophisticatedCoreXPMixin
 {
 
     @ModifyArg(method = "tryFillTankWithPlayerExperience(Lnet/minecraft/world/entity/player/Player;Lnet/p3pp3rf1y/sophisticatedcore/api/IStorageFluidHandler;IZ)V",
@@ -18,7 +19,7 @@ public class UnifySophisticatedCoreXP
                index = 2)
     private Fluid unifiedXp(Fluid originalFluid)
     {
-        Fluid unifiedFluid = ConfigHolder.instance.fluidConfigs.getExperienceFluid();
+        Fluid unifiedFluid = MoreUnification.getReplacementForFluid(originalFluid);
         if (unifiedFluid != null)
         {
             return unifiedFluid;

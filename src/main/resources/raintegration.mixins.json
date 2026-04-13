@@ -8,11 +8,12 @@
     "UnifySteamOutputMixin",
     "UnifyMultiblockSteamOutputMixin",
     "UnifyPowahReactorMixin",
-    "UnifySophisticatedCoreXP",
+    "UnifySophisticatedCoreXPMixin",
     "industrialforegoing.UnifyIndustrialForegoingXP",
     "industrialforegoing.UnifyIndustrialForegoingRubber",
     "industrialforegoing.UnifyIndustrialForegoingJEI",
-    "UnifySGJourneyCrystallizerNaquadah"
+    "UnifySGJourneyCrystallizerNaquadahMixin",
+    "FluidTagLoaderMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -2,6 +2,8 @@ package com.shugabrush.raintegration.mixin;
 
 import com.gregtechceu.gtceu.common.machine.multiblock.steam.LargeBoilerMachine;
 
+import com.shugabrush.raintegration.MoreUnification;
+import com.shugabrush.raintegration.unification.FluidReplacementData;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.shugabrush.raintegration.ConfigHolder;
@@ -20,6 +22,6 @@ public class UnifyMultiblockSteamOutputMixin
                index = 0)
     private FluidStack unifySteam(FluidStack stack)
     {
-        return new FluidStack(ConfigHolder.instance.fluidConfigs.getBoilerFluid(), stack.getAmount());
+        return new FluidStack(MoreUnification.getReplacementForFluid(stack.getFluid()), stack.getAmount());
     }
 }

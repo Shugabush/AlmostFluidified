@@ -1,5 +1,8 @@
 package com.shugabrush.raintegration;
 
+import com.almostreliable.unified.utils.UnifyTag;
+import com.shugabrush.raintegration.unification.FluidUnifyTag;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 
@@ -9,7 +12,15 @@ import dev.toma.configuration.config.Config;
 import dev.toma.configuration.config.Configurable;
 import dev.toma.configuration.config.format.ConfigFormats;
 
-@Config(id = RAIntegration.MOD_ID)
+import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+@Config(id = MoreUnification.MOD_ID)
 public class ConfigHolder
 {
     public static ConfigHolder instance;
@@ -18,7 +29,7 @@ public class ConfigHolder
     {
         if (instance == null)
         {
-            instance = Configuration.registerConfig(ConfigHolder.class, ConfigFormats.yaml()).getConfigInstance();
+            instance = Configuration.registerConfig(ConfigHolder.class, ConfigFormats.json()).getConfigInstance();
         }
     }
 
@@ -26,73 +37,106 @@ public class ConfigHolder
     public FluidConfigs fluidConfigs = new FluidConfigs();
 
     public static class FluidConfigs
-{
+    {
+        @Nullable
+        private Set<UnifyTag<Fluid>> bakedTagsCache;
 
         @Configurable
-        @Configurable.Comment({ "The fluid that's outputted by steam boilers.",
-                "Default: gtceu:steam" })
-        public String boilerFluidOutput = "gtceu:steam";
-        private Fluid boilerFluid;
+        @Configurable.Comment("Mod priorities. Same as almost unified except for fluids, not items and blocks.")
+        public String[] modPriorities =
+                {
+                        "minecraft",
+                        "mekanism",
+                        "gtceu"
+                };
 
         @Configurable
-        @Configurable.Comment({ "The experience to use for experience unification",
-                "Default: industrialforegoing:essence" })
-        public String experience = "industrialforegoing:essence";
-        private Fluid experienceFluid;
-        @Configurable
-        @Configurable.Comment({ "The fluid that SGJourney's crystallizer uses.",
-            "Default: sgjourney:liquid_naquadah"})
-        public String crystallizerFluidInput = "sgjourney:liquid_naquadah";
-        private Fluid crystallizerFluid;
+        @Configurable.Comment("Mod priorities. Same as almost unified except for fluids, not items and blocks.")
+        public String[] priorityOverrides =
+                {
+
+                };
 
         @Configurable
-        @Configurable.Comment({ "The fluid that SGJourney's advanced crystallizer uses.",
-            "Default: sgjourney:liquid_naquadah"})
-        public String advancedCrystallizerFluidInput = "sgjourney:heavy_liquid_naquadah";
-        private Fluid advancedCrystallizerFluid;
+        @Configurable.Comment("Possible fluid tag formats for each fluid")
+        public String[] fluidTags =
+                {
+                        "minecraft:{fluid}",
+                        "forge:{fluid}"
+                };
 
-        public Fluid getBoilerFluid()
+        @Configurable
+        @Configurable.Comment("Fluid tags to ignore")
+        public String[] ignoredTags =
+                {
+
+                };
+
+        @Configurable
+        @Configurable.Comment("All fluids that you want unified")
+        public String[] fluidTagValues =
+                {
+                        "water",
+                        "lava",
+                        "oxygen",
+                        "hydrogen",
+                        "chlorine",
+                        "steam",
+                        "helium"
+                };
+
+        public Set<UnifyTag<Fluid>> bakeAndValidateTags(Map<ResourceLocation, Collection<Holder<Fluid>>> tags)
         {
-            if (boilerFluid == null)
-            {
-                // Doing this in init() is before Fluids are properly registered, so we'll have to check each time here.
-                try
-                {
-                    boilerFluid = FluidUnification
-                            .getFluid(new ResourceLocation(boilerFluidOutput));
-                } catch (Exception e)
-                {
-                    boilerFluid = FluidUnification.getFluid(new ResourceLocation("gtceu:steam"));
+            return bakeTags(tags::containsKey);
+        }
+        private Set<UnifyTag<Fluid>> bakeTags(Predicate<ResourceLocation> tagValidator)
+        {
+            if (bakedTagsCache != null) {
+                return bakedTagsCache;
+            }
+
+            Set<UnifyTag<Fluid>> result = new HashSet<>();
+            Set<UnifyTag<Fluid>> wrongTags = new HashSet<>();
+
+            for (String tag : fluidTags) {
+                for (String fluid : fluidTagValues) {
+                    String replace = tag.replace("{fluid}", fluid);
+                    ResourceLocation asRL = ResourceLocation.tryParse(replace);
+                    if (asRL == null) {
+                        MoreUnification.LOGGER.warn("Could not bake tag <{}> with fluid <{}>", tag, fluid);
+                        continue;
+                    }
+
+                    boolean ignore = false;
+                    UnifyTag<Fluid> f = FluidUnifyTag.fluid(asRL);
+                    for (String ignoredTag : ignoredTags)
+                    {
+                        if (ignoredTag == f.toString())
+                        {
+                            ignore = true;
+                            break;
+                        }
+                    }
+                    if (ignore) continue;
+
+                    if (!tagValidator.test(asRL)) {
+                        wrongTags.add(f);
+                        continue;
+                    }
+
+                    result.add(f);
                 }
             }
-            return boilerFluid;
-        }
 
-        public Fluid getExperienceFluid()
-        {
-            if (experienceFluid == null)
-            {
-                experienceFluid = FluidUnification.getFluid(new ResourceLocation(experience));
+            if (!wrongTags.isEmpty()) {
+                MoreUnification.LOGGER.warn(
+                        "The following tags are invalid and will be ignored: {}",
+                        wrongTags.stream().map(UnifyTag::location).collect(Collectors.toList())
+                );
             }
-            return experienceFluid;
-        }
 
-        public Fluid getCrystallizerFluid()
-        {
-            if (crystallizerFluid == null)
-            {
-                crystallizerFluid = FluidUnification.getFluid(new ResourceLocation(crystallizerFluidInput));
-            }
-            return crystallizerFluid;
-        }
-
-        public Fluid getAdvancedCrystallizerFluid()
-        {
-            if (advancedCrystallizerFluid == null)
-            {
-                advancedCrystallizerFluid = FluidUnification.getFluid(new ResourceLocation(advancedCrystallizerFluidInput));
-            }
-            return advancedCrystallizerFluid;
+            bakedTagsCache = result;
+            return result;
         }
     }
 }
