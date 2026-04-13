@@ -14,7 +14,7 @@
     "industrialforegoing.UnifyIndustrialForegoingJEI",
     "sgjourney.UnifySGJourneyCrystallizerNaquadahMixin",
     "almostunified.FluidTagLoaderMixin",
-    "almostunified.RecipeUnifierBuilderImplMixin"
+    "almostunified.RecipeContextImplMixin"
   ],
   "injectors": {
     "defaultRequire": 1

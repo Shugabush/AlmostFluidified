@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = RecipeContextImpl.class, remap = false)
-public class RecipeUnifierBuilderImplMixin
+public class RecipeContextImplMixin
 {
     @ModifyArg(method = "createIngredientReplacement(Lcom/google/gson/JsonElement;[Ljava/lang/String;)Lcom/google/gson/JsonElement;",
             at = @At(value = "INVOKE", target = "Lcom/almostreliable/unified/recipe/RecipeContextImpl;tryCreateIngredientReplacement(Lcom/google/gson/JsonElement;[Ljava/lang/String;)V"), index = 1)
