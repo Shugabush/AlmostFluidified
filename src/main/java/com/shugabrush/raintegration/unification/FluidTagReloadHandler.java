@@ -9,16 +9,20 @@ import com.shugabrush.raintegration.MoreUnification;
 import java.util.Collection;
 import java.util.Map;
 
-public class FluidTagReloadHandler {
+public class FluidTagReloadHandler
+{
 
-    private static Map<ResourceLocation, Collection<Holder<Fluid>>> RAW_FLUID_TAGS;
+    private static Map< ResourceLocation, Collection< Holder< Fluid>>> RAW_FLUID_TAGS;
 
-    public static void initFluidTags(Map<ResourceLocation, Collection<Holder<Fluid>>> rawFluidTags) {
+    public static void initFluidTags(Map< ResourceLocation, Collection< Holder< Fluid>>> rawFluidTags)
+    {
         RAW_FLUID_TAGS = rawFluidTags;
     }
 
-    public static void run() {
-        if (RAW_FLUID_TAGS == null) return;
+    public static void run()
+    {
+        if (RAW_FLUID_TAGS == null)
+            return;
 
         MoreUnification.onTagLoaderReload(RAW_FLUID_TAGS);
     }

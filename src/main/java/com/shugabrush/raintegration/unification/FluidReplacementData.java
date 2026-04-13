@@ -11,10 +11,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
-public record FluidReplacementData(TagMap<Fluid> globalTagMap, TagMap<Fluid> filteredTagMap,
-                                   FluidReplacementMap replacementMap) {
+public record FluidReplacementData(
+                                   TagMap< Fluid> globalTagMap, TagMap< Fluid> filteredTagMap,
+                                   FluidReplacementMap replacementMap)
+{
 
-    public static FluidReplacementData load(Map<ResourceLocation, Collection<Holder<Fluid>>> tags) {
+    public static FluidReplacementData load(Map< ResourceLocation, Collection< Holder< Fluid>>> tags)
+    {
         var globalTagMap = FluidTagMap.createFromFluidTags(tags);
         var unifyTags = ConfigHolder.instance.fluidConfigs.bakeAndValidateTags(tags);
         var filteredTagMap = globalTagMap.filtered(unifyTags::contains, r -> true);

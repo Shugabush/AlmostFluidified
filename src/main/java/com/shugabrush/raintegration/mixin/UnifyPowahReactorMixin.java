@@ -24,7 +24,8 @@ import owmii.powah.lib.logistics.energy.Energy;
 import owmii.powah.lib.util.Ticker;
 
 @Mixin(value = ReactorTile.class, remap = false)
-public class UnifyPowahReactorMixin extends AbstractEnergyProvider<ReactorBlock> implements IInventoryHolder {
+public class UnifyPowahReactorMixin extends AbstractEnergyProvider< ReactorBlock> implements IInventoryHolder
+{
 
     @Shadow
     public final Ticker fuel = new Ticker(1000);
@@ -32,43 +33,58 @@ public class UnifyPowahReactorMixin extends AbstractEnergyProvider<ReactorBlock>
     @Shadow
     private int baseTemp;
 
-    public UnifyPowahReactorMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    public UnifyPowahReactorMixin(BlockEntityType< ?> type, BlockPos pos, BlockState state)
+    {
         super(type, pos, state);
     }
 
     @Override
-    public int getSlotLimit(int i) {
+    public int getSlotLimit(int i)
+    {
         return 64;
     }
 
-    private boolean isUnifiedUraninite(Item item) {
+    private boolean isUnifiedUraninite(Item item)
+    {
         return item == ItemUnification.getItem("powah:uraninite") ||
                 item == ItemUnification.getItem("powah:uraninite_block");
     }
 
-    private boolean isUnifiedUraninite(ItemStack stack) {
+    private boolean isUnifiedUraninite(ItemStack stack)
+    {
         return isUnifiedUraninite(stack.getItem());
     }
 
     // Allow items with the configured tag to be inserted into the fuel slot
     @Override
-    public boolean canInsert(int slot, ItemStack stack) {
-        if (slot == 1) {
+    public boolean canInsert(int slot, ItemStack stack)
+    {
+        if (slot == 1)
+        {
             return isUnifiedUraninite(stack);
-        } else if (slot == 2) {
+        }
+        else if (slot == 2)
+        {
             return FuelRegistry.get(stack) > 0 && !ItemStackHooks.hasCraftingRemainingItem(stack);
-        } else if (slot == 3) {
+        }
+        else if (slot == 3)
+        {
             return stack.getItem() == Items.REDSTONE || stack.getItem() == Items.REDSTONE_BLOCK;
-        } else if (slot == 4) {
-            Pair<Integer, Integer> coolant = PowahAPI.getSolidCoolant(stack.getItem());
+        }
+        else if (slot == 4)
+        {
+            Pair< Integer, Integer> coolant = PowahAPI.getSolidCoolant(stack.getItem());
             return coolant.getLeft() > 0 && coolant.getRight() < 2;
-        } else {
+        }
+        else
+        {
             return Energy.chargeable(stack);
         }
     }
 
     @Override
-    public boolean canExtract(int i, ItemStack itemStack) {
+    public boolean canExtract(int i, ItemStack itemStack)
+    {
         return true;
     }
 
@@ -77,11 +93,14 @@ public class UnifyPowahReactorMixin extends AbstractEnergyProvider<ReactorBlock>
      * @reason Process the configured fuel item
      */
     @Overwrite
-    private boolean processFuel(Level world) {
+    private boolean processFuel(Level world)
+    {
         boolean flag = false;
-        if (this.fuel.getTicks() <= 900) {
+        if (this.fuel.getTicks() <= 900)
+        {
             ItemStack stack = this.inv.getStackInSlot(1);
-            if (isUnifiedUraninite(stack)) {
+            if (isUnifiedUraninite(stack))
+            {
                 this.fuel.add(100);
                 this.baseTemp = 700;
                 stack.shrink(1);
@@ -89,7 +108,8 @@ public class UnifyPowahReactorMixin extends AbstractEnergyProvider<ReactorBlock>
             }
         }
 
-        if (this.fuel.isEmpty()) {
+        if (this.fuel.isEmpty())
+        {
             this.baseTemp = 0;
         }
         return flag;

@@ -15,16 +15,21 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(value = CrystallizerRecipeCategory.class, remap = false)
-public class UnifySGJourneyCrystallizerNaquadahMixin {
+public class UnifySGJourneyCrystallizerNaquadahMixin
+{
 
-    @ModifyVariable(method = "setRecipe(Lmezz/jei/api/gui/builder/IRecipeLayoutBuilder;Lnet/povstalec/sgjourney/common/recipe/CrystallizerRecipe;Lmezz/jei/api/recipe/IFocusGroup;)V",
+    @ModifyVariable(
+                    method = "setRecipe(Lmezz/jei/api/gui/builder/IRecipeLayoutBuilder;Lnet/povstalec/sgjourney/common/recipe/CrystallizerRecipe;Lmezz/jei/api/recipe/IFocusGroup;)V",
                     at = @At("HEAD"),
                     index = 2)
-    private CrystallizerRecipe getUnifiedRecipe(CrystallizerRecipe recipe) {
-        NonNullList<Ingredient> ingredients = recipe.getIngredients();
-        for (int i = 0; i < ingredients.stream().count(); i++) {
+    private CrystallizerRecipe getUnifiedRecipe(CrystallizerRecipe recipe)
+    {
+        NonNullList< Ingredient> ingredients = recipe.getIngredients();
+        for (int i = 0; i < ingredients.stream().count(); i++)
+        {
             ItemStack[] items = ingredients.get(i).getItems();
-            for (int j = 0; j < items.length; j++) {
+            for (int j = 0; j < items.length; j++)
+            {
                 ItemStack item = new ItemStack(ItemUnification.getItem(items[j]));
                 recipe.getIngredients().get(i).getItems()[j] = item;
             }
@@ -32,11 +37,14 @@ public class UnifySGJourneyCrystallizerNaquadahMixin {
         return recipe;
     }
 
-    @ModifyArg(method = "setRecipe(Lmezz/jei/api/gui/builder/IRecipeLayoutBuilder;Lnet/povstalec/sgjourney/common/recipe/CrystallizerRecipe;Lmezz/jei/api/recipe/IFocusGroup;)V",
-               at = @At(value = "INVOKE",
+    @ModifyArg(
+               method = "setRecipe(Lmezz/jei/api/gui/builder/IRecipeLayoutBuilder;Lnet/povstalec/sgjourney/common/recipe/CrystallizerRecipe;Lmezz/jei/api/recipe/IFocusGroup;)V",
+               at = @At(
+                        value = "INVOKE",
                         target = "Lmezz/jei/api/gui/builder/IRecipeSlotBuilder;addFluidStack(Lnet/minecraft/world/level/material/Fluid;J)Lmezz/jei/api/gui/builder/IIngredientAcceptor;"),
                index = 0)
-    private Fluid getUnifiedFluidStack(Fluid originalFluid) {
+    private Fluid getUnifiedFluidStack(Fluid originalFluid)
+    {
         return MoreUnification.getReplacementForFluid(originalFluid);
     }
 }
