@@ -13,8 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(value = LatexProcessingUnitTile.class, remap = false)
-public class UnifyIndustrialForegoingRubber
-{
+public class UnifyIndustrialForegoingRubber {
 
     @Shadow
     private static int AMOUNT_LATEX = 750;
@@ -33,8 +32,7 @@ public class UnifyIndustrialForegoingRubber
                at = @At(value = "INVOKE",
                         target = "Lnet/minecraftforge/items/ItemHandlerHelper;insertItem(Lnet/minecraftforge/items/IItemHandler;Lnet/minecraft/world/item/ItemStack;Z)Lnet/minecraft/world/item/ItemStack;"),
                index = 1)
-    private @NotNull ItemStack v(@NotNull ItemStack originalItem)
-    {
+    private @NotNull ItemStack v(@NotNull ItemStack originalItem) {
         return new ItemStack(ItemUnification
                 .getItem(originalItem));
     }

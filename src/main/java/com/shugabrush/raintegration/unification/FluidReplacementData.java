@@ -1,10 +1,11 @@
 package com.shugabrush.raintegration.unification;
 
-import com.almostreliable.unified.utils.TagMap;
-import com.shugabrush.raintegration.ConfigHolder;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
+
+import com.almostreliable.unified.utils.TagMap;
+import com.shugabrush.raintegration.ConfigHolder;
 
 import java.util.Collection;
 import java.util.HashSet;
