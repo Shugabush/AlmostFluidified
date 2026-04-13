@@ -6,6 +6,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import com.buuz135.industrial.plugin.jei.JEICustomPlugin;
 import com.buuz135.industrial.plugin.jei.machineproduce.MachineProduceWrapper;
+import com.shugabrush.raintegration.MoreUnification;
 import com.shugabrush.raintegration.unification.ItemUnification;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -37,7 +38,8 @@ public class UnifyIndustrialForegoingJEI {
                         }
                     }
                 } else if (outputFluid != null) {
-                    wrapper = new MachineProduceWrapper(wrapper.getBlock(), outputFluid);
+                    wrapper = new MachineProduceWrapper(wrapper.getBlock(), new FluidStack(
+                            MoreUnification.getReplacementForFluid(outputFluid.getFluid()), outputFluid.getAmount()));
                     recipes.set(i, (T) wrapper);
                 }
             }

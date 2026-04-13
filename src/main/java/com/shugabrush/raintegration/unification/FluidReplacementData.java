@@ -17,7 +17,7 @@ public record FluidReplacementData(TagMap<Fluid> globalTagMap, TagMap<Fluid> fil
     public static FluidReplacementData load(Map<ResourceLocation, Collection<Holder<Fluid>>> tags) {
         var globalTagMap = FluidTagMap.createFromFluidTags(tags);
         var unifyTags = ConfigHolder.instance.fluidConfigs.bakeAndValidateTags(tags);
-        var filteredTagMap = globalTagMap.filtered(unifyTags::contains, (r) -> true);
+        var filteredTagMap = globalTagMap.filtered(unifyTags::contains, r -> true);
 
         var replacementMap = new FluidReplacementMap(filteredTagMap, new HashSet<>());
 
