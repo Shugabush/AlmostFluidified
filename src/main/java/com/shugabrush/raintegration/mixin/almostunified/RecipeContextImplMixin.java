@@ -1,54 +1,127 @@
 package com.shugabrush.raintegration.mixin.almostunified;
 
+import com.almostreliable.unified.api.recipe.RecipeConstants;
 import com.almostreliable.unified.recipe.RecipeContextImpl;
+import com.almostreliable.unified.utils.ReplacementMap;
+import com.almostreliable.unified.utils.UnifyTag;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.shugabrush.raintegration.MoreUnification;
+import com.shugabrush.raintegration.Utils;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.material.Fluid;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import javax.annotation.Nullable;
 
 @Mixin(value = RecipeContextImpl.class, remap = false)
 public class RecipeContextImplMixin
 {
-    @ModifyArg(method = "createIngredientReplacement(Lcom/google/gson/JsonElement;[Ljava/lang/String;)Lcom/google/gson/JsonElement;",
-            at = @At(value = "INVOKE", target = "Lcom/almostreliable/unified/recipe/RecipeContextImpl;tryCreateIngredientReplacement(Lcom/google/gson/JsonElement;[Ljava/lang/String;)V"), index = 1)
-    String[] getIngredientLookupKeys(String[] lookupKeys)
+    @Shadow
+    private ReplacementMap replacementMap;
+
+    @Overwrite
+    @Nullable
+    public JsonElement createIngredientReplacement(@Nullable JsonElement element) {
+        return this.createIngredientReplacement(element, "value", "base", "ingredient", "fluid", "tag");
+    }
+
+    @Shadow
+    public JsonElement createIngredientReplacement(@Nullable JsonElement element, String... lookupKeys)
     {
-        String[] newLookupKeys = new String[lookupKeys.length + 1];
-        for (int i = 0; i < lookupKeys.length; i++)
-        {
-            newLookupKeys[i] = lookupKeys[i];
+        return null;
+    }
+
+    @Overwrite
+    @Nullable
+    public JsonElement createResultReplacement(@Nullable JsonElement element) {
+        return createResultReplacement(element, true, RecipeConstants.ITEM, "fluid", "tag");
+    }
+
+    @Shadow
+    public JsonElement createResultReplacement(@Nullable JsonElement element, boolean tagLookup, String... lookupKeys)
+    {
+        return null;
+    }
+
+    @Inject(method = "tryCreateIngredientReplacement", at = @At("HEAD"))
+    private void tryCreateFluidIngredientReplacement(JsonElement element, String[] lookupKeys, CallbackInfo ci) {
+        if (element instanceof JsonObject object && element.toString().contains("\"fluid\":")) {
+            JsonElement fluid = object.get("fluid");
+            if (fluid instanceof JsonPrimitive primitive) {
+                ResourceLocation fluidLocation = ResourceLocation.tryParse(primitive.getAsString());
+                UnifyTag<Fluid> tag = MoreUnification.getPreferredTagForFluid(fluidLocation);
+                if (tag != null) {
+                    object.remove("fluid");
+                    object.addProperty("tag", tag.location().toString());
+                }
+            }
         }
-        // Add fluid to the lookup keys
-        newLookupKeys[lookupKeys.length] = "fluid";
-        return newLookupKeys;
     }
-
-    @ModifyArg(method = "createResultReplacement(Lcom/google/gson/JsonElement;Z[Ljava/lang/String;)Lcom/google/gson/JsonElement;",
-            at = @At(value = "INVOKE", target = "Lcom/almostreliable/unified/recipe/RecipeContextImpl;tryCreateResultReplacement(Lcom/google/gson/JsonElement;Z[Ljava/lang/String;)Lcom/google/gson/JsonElement;"), index = 2)
-    String[] getResultLookupKeys(String[] lookupKeys)
+    @Inject(method = "tryCreateResultReplacement", at = @At("RETURN"), cancellable = true)
+    private void tryCreateFluidResultReplacement(JsonElement element, boolean tagLookup, String[] lookupKeys, CallbackInfoReturnable<JsonElement> cir)
     {
-        String[] newLookupKeys = new String[lookupKeys.length + 1];
-        for (int i = 0; i < lookupKeys.length; i++)
+        if (element.toString().contains("\"fluid\":"))
         {
-            newLookupKeys[i] = lookupKeys[i];
+            if (element instanceof JsonObject object)
+            {
+                JsonElement value = object.get("value");
+                if (value instanceof JsonArray valueObject)
+                {
+                    valueObject.forEach(valueElement ->
+                    {
+                        if (valueElement instanceof JsonObject valueElementObject)
+                        {
+                            JsonElement fluid = valueElementObject.get("fluid");
+                            if (fluid instanceof JsonPrimitive primitive)
+                            {
+                                ResourceLocation newFluid = BuiltInRegistries.FLUID.getKey(MoreUnification.getReplacementForFluid(new ResourceLocation(primitive.getAsString())));
+                                if (newFluid != null)
+                                {
+                                    valueElementObject.remove("fluid");
+                                    valueElementObject.addProperty("fluid", newFluid.toString());
+                                    cir.setReturnValue(element);
+                                }
+                            }
+
+                            if (tagLookup)
+                            {
+                                JsonElement tag = valueElementObject.get("tag");
+                                if (tag instanceof JsonPrimitive primitive)
+                                {
+                                    ResourceLocation fluidLocation = MoreUnification.getPreferredFluidForTag(Utils.toFluidTag(primitive.getAsString()), ($) -> true);
+                                    if (fluidLocation != null)
+                                    {
+                                        valueElementObject.remove("tag");
+                                        valueElementObject.addProperty("fluid", fluidLocation.toString());
+                                        cir.setReturnValue(element);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
         }
-        // Add fluid to the lookup keys
-        newLookupKeys[lookupKeys.length] = "fluid";
-        return newLookupKeys;
     }
 
-    @ModifyVariable(method = "tryCreateIngredientReplacement", at = @At("HEAD"))
-    JsonElement tryCreateFluidIngredientReplacement(JsonElement element)
-    {
-        return MoreUnification.tryCreateContentReplacement(element);
-    }
+    @Shadow private void tryCreateIngredientReplacement(@Nullable JsonElement element, String... lookupKeys) {}
 
-    @ModifyVariable(method = "tryCreateResultReplacement", at = @At("HEAD"))
-    JsonElement tryCreateFluidResultReplacement(JsonElement element)
+    @Shadow
+    private UnifyTag<Item> getPreferredTagForItem(ResourceLocation item)
     {
-        return MoreUnification.tryCreateContentReplacement(element);
+        return null;
     }
 
 }

@@ -4,6 +4,7 @@ import com.almostreliable.unified.utils.UnifyTag;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.shugabrush.raintegration.unification.FluidReplacementData;
 import com.shugabrush.raintegration.unification.FluidUnifyTag;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -15,12 +16,13 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-
-import com.shugabrush.raintegration.unification.FluidReplacementData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -111,6 +113,8 @@ public class MoreUnification
 
     public static JsonObject tryCreateContentReplacement(@Nullable JsonObject object)
     {
+        if (object == null) return null;
+
         var fluidJson = object.get("fluid");
         if (fluidJson instanceof JsonArray fluidArray)
         {
@@ -123,6 +127,54 @@ public class MoreUnification
             LOGGER.info("Here");
         }
         return object;
+    }
+
+    // This function is for debugging purposes only. It will slow down the final build.
+    public static void writeAllRecipes(Map<ResourceLocation, JsonElement> recipes)
+    {
+        recipes.forEach((location, recipe) ->
+        {
+            try
+            {
+                Path path = Path.of("json-recipes/" + location.getPath() + ".json");
+                Path currentFolder = Path.of(path.getName(0).toString() + "/" + location.getNamespace());
+                if (!Files.exists(currentFolder))
+                {
+                    Files.createDirectory(currentFolder);
+                }
+                for (int i = 1; i < path.getNameCount() - 1; i++)
+                {
+                    currentFolder = Path.of(currentFolder.toString() + "/" + path.getName(i).toString());
+                    if (!Files.exists(currentFolder))
+                    {
+                        Files.createDirectory(currentFolder);
+                    }
+                }
+
+                char[] jsonCharArray = recipe.toString().toCharArray();
+                String jsonString = "";
+
+                for (char jsonChar : jsonCharArray)
+                {
+                    if (jsonChar == '{' || jsonChar == '}')
+                    {
+                        jsonString += "\n";
+                        jsonString += jsonChar;
+                        jsonString += "\n";
+                    }
+                    else
+                    {
+                        jsonString += jsonChar;
+                    }
+                }
+
+                Files.writeString(Path.of("json-recipes/" + location.getNamespace() + "/" + location.getPath() + ".json"), jsonString);
+            }
+            catch (IOException e)
+            {
+                LOGGER.error(e);
+            }
+        });
     }
 
     private static JsonArray tryCreateContentReplacement(JsonArray array)
