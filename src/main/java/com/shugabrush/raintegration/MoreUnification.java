@@ -1,7 +1,10 @@
 package com.shugabrush.raintegration;
 
 import com.almostreliable.unified.utils.UnifyTag;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.shugabrush.raintegration.unification.FluidUnifyTag;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +20,7 @@ import com.shugabrush.raintegration.unification.FluidReplacementData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -73,7 +77,7 @@ public class MoreUnification
 
     public static void onRecipeManagerReload(Map<ResourceLocation, JsonElement> recipes)
     {
-
+        LOGGER.info("Recipe Count: " + recipes.size());
     }
 
     public static Fluid getReplacementForFluid(ResourceLocation fluid)
@@ -94,5 +98,88 @@ public class MoreUnification
     public static ResourceLocation getPreferredFluidForTag(UnifyTag<Fluid> tag, Predicate<ResourceLocation> fluidFilter)
     {
         return fluidReplacementData.replacementMap().getPreferredFluidForTag(tag, fluidFilter);
+    }
+
+    public static JsonObject tryCreateContentReplacement(@Nullable JsonElement element)
+    {
+        if (element instanceof JsonObject object && element.toString().contains("fluid"))
+        {
+            return tryCreateContentReplacement(object);
+        }
+        return null;
+    }
+
+    public static JsonObject tryCreateContentReplacement(@Nullable JsonObject object)
+    {
+        var fluidJson = object.get("fluid");
+        if (fluidJson instanceof JsonArray fluidArray)
+        {
+            fluidArray = tryCreateContentReplacement(fluidArray);
+            object.remove("fluid");
+            object.add("fluid", fluidArray);
+        }
+        else if (fluidJson instanceof JsonObject fluidObj)
+        {
+            LOGGER.info("Here");
+        }
+        return object;
+    }
+
+    private static JsonArray tryCreateContentReplacement(JsonArray array)
+    {
+        array.forEach(element ->
+        {
+            if (element instanceof JsonObject obj)
+            {
+                if (obj.get("content") instanceof JsonObject contentObj)
+                {
+                    if (contentObj.get("value") instanceof JsonArray valueArray)
+                    {
+                        valueArray.forEach(valueElement ->
+                        {
+                            if (valueElement instanceof JsonObject valueObj)
+                            {
+                                var tag = valueObj.get("tag");
+                                if (tag != null && isValidFluid(tag.toString()))
+                                {
+                                    UnifyTag<Fluid> fluidTag = FluidUnifyTag.fluid(ResourceLocation.tryParse(tag.getAsString()));
+                                    ResourceLocation fluidLocation = MoreUnification.getPreferredFluidForTag(fluidTag, r -> true);
+                                    if (fluidLocation != null)
+                                    {
+                                        valueObj.remove("tag");
+                                        valueObj.addProperty("fluid", fluidLocation.toString());
+                                    }
+                                }
+                                else
+                                {
+                                    var fluid = valueObj.get("Fluid");
+                                    if (fluid != null && isValidFluid(fluid.toString()))
+                                    {
+                                        ResourceLocation oldFluidLocation = ResourceLocation.tryParse(fluid.getAsString());
+                                        ResourceLocation fluidLocation = BuiltInRegistries.FLUID.getKey(MoreUnification.getReplacementForFluid(oldFluidLocation));
+
+                                        if (oldFluidLocation != fluidLocation)
+                                        {
+                                            valueObj.remove("fluid");
+                                            valueObj.addProperty("fluid", fluidLocation.toString());
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+        return array;
+    }
+
+    public static boolean isValidFluid(String fluid)
+    {
+        for (String f : ConfigHolder.instance.fluidConfigs.fluids)
+        {
+            if (f == fluid) return true;
+        }
+        return false;
     }
 }

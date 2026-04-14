@@ -13,8 +13,10 @@
     "industrialforegoing.UnifyIndustrialForegoingRubber",
     "industrialforegoing.UnifyIndustrialForegoingJEI",
     "sgjourney.UnifySGJourneyCrystallizerNaquadahMixin",
+    "almostunified.FluidRecipeManagerMixin",
     "almostunified.FluidTagLoaderMixin",
-    "almostunified.RecipeContextImplMixin"
+    "almostunified.RecipeContextImplMixin",
+    "almostunified.compat.GregTechModernRecipeUnifierMixin"
   ],
   "injectors": {
     "defaultRequire": 1
