@@ -1,6 +1,7 @@
 package com.shugabrush.raintegration;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.MinecraftForge;
@@ -32,6 +33,8 @@ public class RAIntegration
             "gtceu:oxygen", "forge:hydrogen", "gtceu:hydrogen");
 
     private static Map< ResourceLocation, Collection< Holder< Fluid>>> fluidTags = new HashMap<>();
+
+    private static Map<Fluid, ResourceLocation> tagFluids = new HashMap<>();
 
     public RAIntegration()
     {
@@ -80,6 +83,20 @@ public class RAIntegration
     public static void initFluidTags(Map< ResourceLocation, Collection< Holder< Fluid>>> tags)
     {
         fluidTags = tags;
+        for (String priorityFluid : ConfigHolder.instance.fluidConfigs.priorityFluids)
+        {
+            fluidTags.forEach((location, holder) ->
+            {
+                for (Holder<Fluid> fluidHolder : holder)
+                {
+                    ResourceLocation fluidLocation = BuiltInRegistries.FLUID.getKey(fluidHolder.get());
+                    if (fluidLocation.toString() == priorityFluid)
+                    {
+                        tagFluids.put(fluidHolder.get(), fluidLocation);
+                    }
+                }
+            });
+        }
     }
 
     public static Collection< Holder< Fluid>> getFluids(ResourceLocation resourceLocation)
