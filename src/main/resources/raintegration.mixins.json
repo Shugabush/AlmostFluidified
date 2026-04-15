@@ -12,7 +12,9 @@
     "industrialforegoing.FluidTankComponentMixin",
     "industrialforegoing.LatexProcessingUnitTileMixin",
     "industrialforegoing.JEICustomPluginMixin",
-    "sgjourney.CrystallizerRecipeCategoryMixin"
+    "sgjourney.CrystallizerRecipeCategoryMixin",
+    "sgjourney.StargateJourneyClientModEventsMixin",
+    "almostunified.FluidRecipeManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

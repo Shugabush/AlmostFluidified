@@ -8,8 +8,11 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+import com.google.gson.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.*;
 
 @Mod(RAIntegration.MOD_ID)
 @SuppressWarnings("removal")
@@ -36,13 +39,13 @@ public class RAIntegration
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
-        event.enqueueWork(() ->
-        {
+        event.enqueueWork(() -> {
 
         });
     }
 
-    private void clientSetup(final FMLClientSetupEvent event) {}
+    private void clientSetup(final FMLClientSetupEvent event)
+    {}
 
     /**
      * Create a ResourceLocation in the format "modid:path"
@@ -51,7 +54,62 @@ public class RAIntegration
      * @return ResourceLocation with the namespace of your mod
      */
     public static ResourceLocation id(String path)
-{
+    {
         return new ResourceLocation(MOD_ID, path);
+    }
+
+    public static void onRecipeManagerReload(Map<ResourceLocation, JsonElement> recipes)
+    {
+        Map<String, String> fluids = new HashMap<>();
+        fluids.put("forge:steam", "mekanism:steam");
+        fluids.put("forge:oxygen", "mekanism:oxygen");
+        fluids.put("forge:hydrogen", "mekanism:hydrogen");
+
+        long startTime = System.nanoTime();
+        recipes.forEach((location, recipe) -> {
+            JsonElement unifiedRecipe = unifyFluidRecipe(recipe);
+        });
+        long endTime = System.nanoTime();
+        long durationMs = (endTime - startTime) / 1_000_000; // Convert to milliseconds
+        LOGGER.info("Fluids unified for recipes in {} ms", durationMs);
+    }
+
+    static final Set<String> propertyWhitelist = Set.of("tag", "fluid", "input", "output");
+
+    public static JsonElement unifyFluidRecipe(JsonElement element)
+    {
+        if (element == null) return null;
+        JsonElement copyElement = element.deepCopy();
+        if (copyElement instanceof JsonPrimitive primitive) {
+            String primitiveString = primitive.toString();
+            JsonElement unifiedPrimitive = JsonParser.parseString(primitiveString);
+            LOGGER.info("{} vs {}", primitive, unifiedPrimitive);
+        } else if (copyElement instanceof JsonArray array) {
+            for (int i = 0; i < array.size(); i++) {
+                JsonElement arrayElement = array.get(i);
+                array.set(i, unifyFluidRecipe(arrayElement));
+            }
+        } else if (copyElement instanceof JsonObject object) {
+            Set<String> objectProperties = object.deepCopy().keySet();
+
+            Iterator<String> propertyIterator = objectProperties.iterator();
+            while (propertyIterator.hasNext()) {
+                String currentProperty = propertyIterator.next();
+                if (propertyWhitelist.contains(currentProperty)) {
+                    JsonElement propertyElement = object.get(currentProperty);
+                    JsonElement unifiedPropertyElement = unifyFluidRecipe(propertyElement);
+                    if (propertyElement instanceof JsonPrimitive propertyPrimitive) {
+                        LOGGER.info("{}:{}", currentProperty, propertyPrimitive.toString());
+                    }
+                    if (!propertyElement.equals(unifiedPropertyElement)) {
+                        object.remove(currentProperty);
+                        object.add(currentProperty, unifiedPropertyElement);
+                    }
+                }
+                propertyIterator.remove();
+            }
+        }
+
+        return copyElement;
     }
 }

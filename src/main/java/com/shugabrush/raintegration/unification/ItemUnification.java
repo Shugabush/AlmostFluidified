@@ -13,12 +13,10 @@ public class ItemUnification
 
     public static Item getItem(ResourceLocation resourceLocation)
     {
-        if (ModList.get().isLoaded("almostunified"))
-        {
+        if (ModList.get().isLoaded("almostunified")) {
             ResourceLocation unifiedResourceLocation = AlmostUnified.getRuntime().getReplacementMap().get()
                     .getReplacementForItem(resourceLocation);
-            if (unifiedResourceLocation != null)
-            {
+            if (unifiedResourceLocation != null) {
                 return BuiltInRegistries.ITEM.get(unifiedResourceLocation);
             }
         }
@@ -26,17 +24,17 @@ public class ItemUnification
     }
 
     public static Item getItem(String resourceLocation)
-{
+    {
         return getItem(new ResourceLocation(resourceLocation));
     }
 
     public static Item getItem(Item originalItem)
-{
+    {
         return getItem(getItemLocation(originalItem));
     }
 
     public static Item getItem(ItemStack originalItem)
-{
+    {
         return getItem(originalItem.getItem());
     }
 
