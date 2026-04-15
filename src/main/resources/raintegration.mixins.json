@@ -14,7 +14,8 @@
     "industrialforegoing.JEICustomPluginMixin",
     "sgjourney.CrystallizerRecipeCategoryMixin",
     "sgjourney.StargateJourneyClientModEventsMixin",
-    "almostunified.FluidRecipeManagerMixin"
+    "almostunified.FluidRecipeManagerMixin",
+    "almostunified.FluidTagLoaderMixin"
   ],
   "injectors": {
     "defaultRequire": 1
