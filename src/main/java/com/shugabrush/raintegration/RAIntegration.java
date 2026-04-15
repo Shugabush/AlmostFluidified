@@ -1,5 +1,7 @@
 package com.shugabrush.raintegration;
 
+import com.google.gson.stream.JsonReader;
+import com.shugabrush.raintegration.unification.FluidUnification;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -12,6 +14,7 @@ import com.google.gson.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.StringReader;
 import java.util.*;
 
 @Mod(RAIntegration.MOD_ID)
@@ -58,13 +61,12 @@ public class RAIntegration
         return new ResourceLocation(MOD_ID, path);
     }
 
+
+    public static final Map<String, String> fluids = Map.of("forge:steam", "mekanism:steam", "forge:oxygen", "mekanism:oxygen", "forge:hydrogen", "mekanism:hydrogen");
+
+
     public static void onRecipeManagerReload(Map<ResourceLocation, JsonElement> recipes)
     {
-        Map<String, String> fluids = new HashMap<>();
-        fluids.put("forge:steam", "mekanism:steam");
-        fluids.put("forge:oxygen", "mekanism:oxygen");
-        fluids.put("forge:hydrogen", "mekanism:hydrogen");
-
         long startTime = System.nanoTime();
         recipes.forEach((location, recipe) -> {
             JsonElement unifiedRecipe = unifyFluidRecipe(recipe);
@@ -81,9 +83,9 @@ public class RAIntegration
         if (element == null) return null;
         JsonElement copyElement = element.deepCopy();
         if (copyElement instanceof JsonPrimitive primitive) {
-            String primitiveString = primitive.toString();
-            JsonElement unifiedPrimitive = JsonParser.parseString(primitiveString);
-            LOGGER.info("{} vs {}", primitive, unifiedPrimitive);
+            String primitiveString = FluidUnification.getUnifiedFluidString(primitive.toString());
+            JsonPrimitive unifiedPrimitive = JsonParser.parseString(primitiveString).getAsJsonPrimitive();
+            LOGGER.info("{} vs {}", primitiveString, unifiedPrimitive);
         } else if (copyElement instanceof JsonArray array) {
             for (int i = 0; i < array.size(); i++) {
                 JsonElement arrayElement = array.get(i);

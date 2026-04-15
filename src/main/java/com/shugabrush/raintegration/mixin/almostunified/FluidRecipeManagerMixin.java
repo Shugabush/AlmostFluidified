@@ -24,9 +24,12 @@ public class FluidRecipeManagerMixin
     private void runTransformation(Map<ResourceLocation, JsonElement> recipes, ResourceManager resourceManager,
                                    ProfilerFiller profiler, CallbackInfo ci)
     {
-        try {
+        try
+        {
             RAIntegration.onRecipeManagerReload(recipes);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             RAIntegration.LOGGER.error(e.getMessage(), e);
         }
     }
