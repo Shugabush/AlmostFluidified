@@ -17,7 +17,8 @@ public class ConfigHolder
 
     public static void init()
     {
-        if (instance == null) {
+        if (instance == null)
+        {
             instance = Configuration.registerConfig(ConfigHolder.class, ConfigFormats.yaml()).getConfigInstance();
         }
     }
@@ -29,36 +30,52 @@ public class ConfigHolder
     {
 
         @Configurable
-        @Configurable.Comment({ "The fluid that's outputted by steam boilers.",
-                "Default: gtceu:steam" })
+        @Configurable.Comment(
+        {
+                "The fluid that's outputted by steam boilers.",
+                "Default: gtceu:steam"
+        })
         public String boilerFluidOutput = "gtceu:steam";
         private Fluid boilerFluid;
 
         @Configurable
-        @Configurable.Comment({ "The experience to use for hard-coded experience unification.",
-                "Default: industrialforegoing:essence" })
+        @Configurable.Comment(
+        {
+                "The experience to use for hard-coded experience unification.",
+                "Default: industrialforegoing:essence"
+        })
         public String experience = "industrialforegoing:essence";
         private Fluid experienceFluid;
         @Configurable
-        @Configurable.Comment({ "The fluid that SGJourney's crystallizer uses.",
-                "Default: sgjourney:liquid_naquadah" })
+        @Configurable.Comment(
+        {
+                "The fluid that SGJourney's crystallizer uses.",
+                "Default: sgjourney:liquid_naquadah"
+        })
         public String crystallizerFluidInput = "sgjourney:liquid_naquadah";
         private Fluid crystallizerFluid;
 
         @Configurable
-        @Configurable.Comment({ "The fluid that SGJourney's advanced crystallizer uses.",
-                "Default: sgjourney:liquid_naquadah" })
+        @Configurable.Comment(
+        {
+                "The fluid that SGJourney's advanced crystallizer uses.",
+                "Default: sgjourney:liquid_naquadah"
+        })
         public String advancedCrystallizerFluidInput = "sgjourney:heavy_liquid_naquadah";
         private Fluid advancedCrystallizerFluid;
 
         public Fluid getBoilerFluid()
         {
-            if (boilerFluid == null) {
+            if (boilerFluid == null)
+            {
                 // Doing this in init() is before Fluids are properly registered, so we'll have to check each time here.
-                try {
+                try
+                {
                     boilerFluid = FluidUnification
                             .getFluid(new ResourceLocation(boilerFluidOutput));
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     boilerFluid = FluidUnification.getFluid(new ResourceLocation("gtceu:steam"));
                 }
             }
@@ -67,7 +84,8 @@ public class ConfigHolder
 
         public Fluid getExperienceFluid()
         {
-            if (experienceFluid == null) {
+            if (experienceFluid == null)
+            {
                 experienceFluid = FluidUnification.getFluid(new ResourceLocation(experience));
             }
             return experienceFluid;
@@ -75,7 +93,8 @@ public class ConfigHolder
 
         public Fluid getCrystallizerFluid()
         {
-            if (crystallizerFluid == null) {
+            if (crystallizerFluid == null)
+            {
                 crystallizerFluid = FluidUnification.getFluid(new ResourceLocation(crystallizerFluidInput));
             }
             return crystallizerFluid;
@@ -83,7 +102,8 @@ public class ConfigHolder
 
         public Fluid getAdvancedCrystallizerFluid()
         {
-            if (advancedCrystallizerFluid == null) {
+            if (advancedCrystallizerFluid == null)
+            {
                 advancedCrystallizerFluid = FluidUnification
                         .getFluid(new ResourceLocation(advancedCrystallizerFluidInput));
             }

@@ -20,10 +20,14 @@ public class StargateJourneyClientModEventsMixin
     private static Fluid getUnifiedRenderLayer(Fluid fluid)
     {
         var str = BuiltInRegistries.FLUID.getKey(fluid).toString();
-        if (str.contains("liquid_naquadah")) {
-            if (str.contains("heavy_liquid_naquadah")) {
+        if (str.contains("liquid_naquadah"))
+        {
+            if (str.contains("heavy_liquid_naquadah"))
+            {
 
-            } else {
+            }
+            else
+            {
 
             }
             RAIntegration.LOGGER.info("here");

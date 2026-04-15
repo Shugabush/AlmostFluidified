@@ -26,11 +26,14 @@ public class CrystallizerRecipeCategoryMixin
                     index = 2)
     private CrystallizerRecipe getUnifiedRecipe(CrystallizerRecipe recipe)
     {
-        if (ModList.get().isLoaded("almostunified")) {
-            NonNullList<Ingredient> ingredients = recipe.getIngredients();
-            for (int i = 0; i < ingredients.stream().count(); i++) {
+        if (ModList.get().isLoaded("almostunified"))
+        {
+            NonNullList< Ingredient> ingredients = recipe.getIngredients();
+            for (int i = 0; i < ingredients.stream().count(); i++)
+            {
                 ItemStack[] items = ingredients.get(i).getItems();
-                for (int j = 0; j < items.length; j++) {
+                for (int j = 0; j < items.length; j++)
+                {
                     ItemStack item = new ItemStack(ItemUnification.getItem(items[j]));
                     recipe.getIngredients().get(i).getItems()[j] = item;
                 }

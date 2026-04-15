@@ -21,13 +21,13 @@ public class LatexProcessingUnitTileMixin
     @Shadow
     private static int AMOUNT_WATER = 500;
     @Shadow
-    private SidedFluidTankComponent<LatexProcessingUnitTile> latex;
+    private SidedFluidTankComponent< LatexProcessingUnitTile> latex;
 
     @Shadow
-    private SidedFluidTankComponent<LatexProcessingUnitTile> water;
+    private SidedFluidTankComponent< LatexProcessingUnitTile> water;
 
     @Shadow
-    private SidedInventoryComponent<LatexProcessingUnitTile> output;
+    private SidedInventoryComponent< LatexProcessingUnitTile> output;
 
     @ModifyArg(method = "lambda$onFinish$2",
                at = @At(value = "INVOKE",

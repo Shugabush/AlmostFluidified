@@ -19,7 +19,8 @@ public class XpPumpUpgradeWrapperMixin
     private Fluid unifiedXp(Fluid originalFluid)
     {
         Fluid unifiedFluid = ConfigHolder.instance.fluidConfigs.getExperienceFluid();
-        if (unifiedFluid != null) {
+        if (unifiedFluid != null)
+        {
             return unifiedFluid;
         }
         return originalFluid;

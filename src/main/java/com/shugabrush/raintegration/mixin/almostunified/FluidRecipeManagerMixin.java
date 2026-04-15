@@ -21,7 +21,7 @@ public class FluidRecipeManagerMixin
 
     @Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V",
             at = @At("HEAD"))
-    private void runTransformation(Map<ResourceLocation, JsonElement> recipes, ResourceManager resourceManager,
+    private void runTransformation(Map< ResourceLocation, JsonElement> recipes, ResourceManager resourceManager,
                                    ProfilerFiller profiler, CallbackInfo ci)
     {
         try

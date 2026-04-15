@@ -24,7 +24,7 @@ import owmii.powah.lib.logistics.energy.Energy;
 import owmii.powah.lib.util.Ticker;
 
 @Mixin(value = ReactorTile.class, remap = false)
-public class ReactorTileMixin extends AbstractEnergyProvider<ReactorBlock> implements IInventoryHolder
+public class ReactorTileMixin extends AbstractEnergyProvider< ReactorBlock> implements IInventoryHolder
 {
 
     @Shadow
@@ -33,7 +33,7 @@ public class ReactorTileMixin extends AbstractEnergyProvider<ReactorBlock> imple
     @Shadow
     private int baseTemp;
 
-    public ReactorTileMixin(BlockEntityType<?> type, BlockPos pos, BlockState state)
+    public ReactorTileMixin(BlockEntityType< ?> type, BlockPos pos, BlockState state)
     {
         super(type, pos, state);
     }
@@ -59,16 +59,25 @@ public class ReactorTileMixin extends AbstractEnergyProvider<ReactorBlock> imple
     @Override
     public boolean canInsert(int slot, ItemStack stack)
     {
-        if (slot == 1) {
+        if (slot == 1)
+        {
             return isUnifiedUraninite(stack);
-        } else if (slot == 2) {
+        }
+        else if (slot == 2)
+        {
             return FuelRegistry.get(stack) > 0 && !ItemStackHooks.hasCraftingRemainingItem(stack);
-        } else if (slot == 3) {
+        }
+        else if (slot == 3)
+        {
             return stack.getItem() == Items.REDSTONE || stack.getItem() == Items.REDSTONE_BLOCK;
-        } else if (slot == 4) {
-            Pair<Integer, Integer> coolant = PowahAPI.getSolidCoolant(stack.getItem());
+        }
+        else if (slot == 4)
+        {
+            Pair< Integer, Integer> coolant = PowahAPI.getSolidCoolant(stack.getItem());
             return coolant.getLeft() > 0 && coolant.getRight() < 2;
-        } else {
+        }
+        else
+        {
             return Energy.chargeable(stack);
         }
     }
@@ -87,9 +96,11 @@ public class ReactorTileMixin extends AbstractEnergyProvider<ReactorBlock> imple
     private boolean processFuel(Level world)
     {
         boolean flag = false;
-        if (this.fuel.getTicks() <= 900) {
+        if (this.fuel.getTicks() <= 900)
+        {
             ItemStack stack = this.inv.getStackInSlot(1);
-            if (isUnifiedUraninite(stack)) {
+            if (isUnifiedUraninite(stack))
+            {
                 this.fuel.add(100);
                 this.baseTemp = 700;
                 stack.shrink(1);
@@ -97,7 +108,8 @@ public class ReactorTileMixin extends AbstractEnergyProvider<ReactorBlock> imple
             }
         }
 
-        if (this.fuel.isEmpty()) {
+        if (this.fuel.isEmpty())
+        {
             this.baseTemp = 0;
         }
         return flag;
