@@ -22,7 +22,6 @@ classes/
 .vscode/
 bin/
 .classpath
-.project
 
 # macos
 
