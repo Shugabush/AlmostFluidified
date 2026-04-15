@@ -9,6 +9,9 @@ import dev.toma.configuration.config.Config;
 import dev.toma.configuration.config.Configurable;
 import dev.toma.configuration.config.format.ConfigFormats;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Config(id = RAIntegration.MOD_ID)
 public class ConfigHolder
 {
@@ -28,6 +31,9 @@ public class ConfigHolder
 
     public static class FluidConfigs
     {
+        @Configurable
+        @Configurable.Comment("Put all your top-priority fluid ids here. Other fluids that have the same tag will be replaced.")
+        public String[] priorityFluids = {"minecraft:water", "minecraft:lava"};
 
         @Configurable
         @Configurable.Comment(
