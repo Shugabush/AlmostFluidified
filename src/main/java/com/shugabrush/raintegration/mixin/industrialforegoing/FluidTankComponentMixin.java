@@ -12,12 +12,12 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(value = FluidTankComponent.class, remap = false)
-public class UnifyIndustrialForegoingXP extends FluidTank
+public class FluidTankComponentMixin extends FluidTank
 {
     @Shadow
     private FluidTankComponent.Action tankAction;
 
-    public UnifyIndustrialForegoingXP(int capacity)
+    public FluidTankComponentMixin(int capacity)
 {
         super(capacity);
     }

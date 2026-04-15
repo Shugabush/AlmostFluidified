@@ -1,7 +1,6 @@
-package com.shugabrush.raintegration.mixin;
+package com.shugabrush.raintegration.mixin.sgjourney;
 
 import com.shugabrush.raintegration.ConfigHolder;
-import com.shugabrush.raintegration.unification.FluidUnification;
 import com.shugabrush.raintegration.unification.ItemUnification;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
@@ -16,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(value = CrystallizerRecipeCategory.class, remap = false)
-public class UnifySGJourneyCrystallizerNaquadah
+public class CrystallizerRecipeCategoryMixin
 {
     // Almost Unified doesn't unify crystallizer recipes,
     // So I'm doing it here

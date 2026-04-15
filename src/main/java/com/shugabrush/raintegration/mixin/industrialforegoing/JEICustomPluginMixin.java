@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import java.util.List;
 
 @Mixin(value = JEICustomPlugin.class, remap = false)
-public class UnifyIndustrialForegoingJEI
+public class JEICustomPluginMixin
 {
 
     @ModifyArg(method = "registerRecipes",

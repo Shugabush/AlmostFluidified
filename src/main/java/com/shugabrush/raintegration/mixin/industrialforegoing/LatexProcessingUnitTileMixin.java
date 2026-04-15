@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(value = LatexProcessingUnitTile.class, remap = false)
-public class UnifyIndustrialForegoingRubber
+public class LatexProcessingUnitTileMixin
 {
 
     @Shadow

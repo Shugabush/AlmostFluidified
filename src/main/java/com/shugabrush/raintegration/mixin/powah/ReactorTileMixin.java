@@ -1,4 +1,4 @@
-package com.shugabrush.raintegration.mixin;
+package com.shugabrush.raintegration.mixin.powah;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
@@ -24,7 +24,7 @@ import owmii.powah.lib.logistics.energy.Energy;
 import owmii.powah.lib.util.Ticker;
 
 @Mixin(value = ReactorTile.class, remap = false)
-public class UnifyPowahReactorMixin extends AbstractEnergyProvider<ReactorBlock> implements IInventoryHolder
+public class ReactorTileMixin extends AbstractEnergyProvider<ReactorBlock> implements IInventoryHolder
 {
 
     @Shadow
@@ -33,7 +33,7 @@ public class UnifyPowahReactorMixin extends AbstractEnergyProvider<ReactorBlock>
     @Shadow
     private int baseTemp;
 
-    public UnifyPowahReactorMixin(BlockEntityType<?> type, BlockPos pos, BlockState state)
+    public ReactorTileMixin(BlockEntityType<?> type, BlockPos pos, BlockState state)
 {
         super(type, pos, state);
     }

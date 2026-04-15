@@ -1,6 +1,6 @@
-package com.shugabrush.raintegration.mixin;
+package com.shugabrush.raintegration.mixin.gtceu;
 
-import com.gregtechceu.gtceu.api.machine.steam.SteamBoilerMachine;
+import com.gregtechceu.gtceu.common.machine.multiblock.steam.LargeBoilerMachine;
 
 import net.minecraftforge.fluids.FluidStack;
 
@@ -9,14 +9,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
-@Mixin(value = SteamBoilerMachine.class, remap = false)
-public abstract class UnifySteamOutputMixin
+@Mixin(value = LargeBoilerMachine.class, remap = false)
+public class LargeBoilerMachineMixin
 {
 
-    // Make steam boilers produce Configured Liquid Steam
+    // Make multiblock steam boilers produce Configured Liquid Steam
     @ModifyArg(method = "updateCurrentTemperature",
                at = @At(value = "INVOKE",
-                        target = "Lcom/gregtechceu/gtceu/api/machine/trait/NotifiableFluidTank;fillInternal(Lnet/minecraftforge/fluids/FluidStack;Lnet/minecraftforge/fluids/capability/IFluidHandler$FluidAction;)I"),
+                        target = "Lcom/gregtechceu/gtceu/api/recipe/ingredient/FluidIngredient;of(Lnet/minecraftforge/fluids/FluidStack;)Lcom/gregtechceu/gtceu/api/recipe/ingredient/FluidIngredient;"),
                index = 0)
     private FluidStack unifySteam(FluidStack stack)
     {

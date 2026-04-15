@@ -5,14 +5,14 @@
   "minVersion": "0.8",
   "refmap": "mixins.raintegration.refmap.json",
   "mixins": [
-    "UnifySteamOutputMixin",
-    "UnifyMultiblockSteamOutputMixin",
-    "UnifyPowahReactorMixin",
-    "UnifySophisticatedCoreXP",
-    "industrialforegoing.UnifyIndustrialForegoingXP",
-    "industrialforegoing.UnifyIndustrialForegoingRubber",
-    "industrialforegoing.UnifyIndustrialForegoingJEI",
-    "UnifySGJourneyCrystallizerNaquadah"
+    "gtceu.SteamBoilerMachineMixin",
+    "gtceu.LargeBoilerMachineMixin",
+    "powah.ReactorTileMixin",
+    "sophisticatedcore.XpPumpUpgradeWrapperMixin",
+    "industrialforegoing.FluidTankComponentMixin",
+    "industrialforegoing.LatexProcessingUnitTileMixin",
+    "industrialforegoing.JEICustomPluginMixin",
+    "sgjourney.CrystallizerRecipeCategoryMixin"
   ],
   "injectors": {
     "defaultRequire": 1
