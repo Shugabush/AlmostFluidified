@@ -18,6 +18,8 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(value = CrystallizerRecipeCategory.class, remap = false)
 public class UnifySGJourneyCrystallizerNaquadah
 {
+    // Almost Unified doesn't unify crystallizer recipes,
+    // So I'm doing it here
     @ModifyVariable(method = "setRecipe(Lmezz/jei/api/gui/builder/IRecipeLayoutBuilder;Lnet/povstalec/sgjourney/common/recipe/CrystallizerRecipe;Lmezz/jei/api/recipe/IFocusGroup;)V",
             at = @At("HEAD"), index = 2)
     private CrystallizerRecipe getUnifiedRecipe(CrystallizerRecipe recipe)
@@ -37,6 +39,7 @@ public class UnifySGJourneyCrystallizerNaquadah
         return recipe;
     }
 
+    // Get the crystallizer fluid that will be accepted
     @ModifyArg(method = "setRecipe(Lmezz/jei/api/gui/builder/IRecipeLayoutBuilder;Lnet/povstalec/sgjourney/common/recipe/CrystallizerRecipe;Lmezz/jei/api/recipe/IFocusGroup;)V",
             at = @At(value = "INVOKE", target = "Lmezz/jei/api/gui/builder/IRecipeSlotBuilder;addFluidStack(Lnet/minecraft/world/level/material/Fluid;J)Lmezz/jei/api/gui/builder/IIngredientAcceptor;"), index = 0)
     private Fluid getUnifiedFluidStack(Fluid originalFluid)

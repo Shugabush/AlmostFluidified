@@ -35,7 +35,7 @@ public class ConfigHolder
         private Fluid boilerFluid;
 
         @Configurable
-        @Configurable.Comment({ "The experience to use for experience unification",
+        @Configurable.Comment({ "The experience to use for hard-coded experience unification.",
                 "Default: industrialforegoing:essence" })
         public String experience = "industrialforegoing:essence";
         private Fluid experienceFluid;
