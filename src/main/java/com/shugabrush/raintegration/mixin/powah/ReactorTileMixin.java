@@ -24,11 +24,7 @@ import owmii.powah.lib.logistics.energy.Energy;
 import owmii.powah.lib.util.Ticker;
 
 @Mixin(value = ReactorTile.class, remap = false)
-<<<<<<<< HEAD:src/main/java/com/shugabrush/raintegration/mixin/powah/ReactorTileMixin.java
 public class ReactorTileMixin extends AbstractEnergyProvider< ReactorBlock> implements IInventoryHolder
-========
-public class UnifyPowahReactorMixin extends AbstractEnergyProvider< ReactorBlock> implements IInventoryHolder
->>>>>>>> main:src/main/java/com/shugabrush/raintegration/mixin/powah/UnifyPowahReactorMixin.java
 {
 
     @Shadow
@@ -37,11 +33,7 @@ public class UnifyPowahReactorMixin extends AbstractEnergyProvider< ReactorBlock
     @Shadow
     private int baseTemp;
 
-<<<<<<<< HEAD:src/main/java/com/shugabrush/raintegration/mixin/powah/ReactorTileMixin.java
     public ReactorTileMixin(BlockEntityType< ?> type, BlockPos pos, BlockState state)
-========
-    public UnifyPowahReactorMixin(BlockEntityType< ?> type, BlockPos pos, BlockState state)
->>>>>>>> main:src/main/java/com/shugabrush/raintegration/mixin/powah/UnifyPowahReactorMixin.java
     {
         super(type, pos, state);
     }

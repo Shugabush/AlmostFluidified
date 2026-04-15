@@ -8,7 +8,6 @@ import net.minecraft.world.level.material.Fluid;
 import com.shugabrush.raintegration.RAIntegration;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 public class FluidUnification
@@ -26,8 +25,8 @@ public class FluidUnification
             String tag = entry.getKey();
             String fluid = entry.getValue();
 
-            Collection<Holder<Fluid>> fluidList = RAIntegration.getFluids(new ResourceLocation(tag));
-            for (Holder<Fluid> fluidHolder : fluidList)
+            Collection< Holder< Fluid>> fluidList = RAIntegration.getFluids(new ResourceLocation(tag));
+            for (Holder< Fluid> fluidHolder : fluidList)
             {
                 String fluidStr = BuiltInRegistries.FLUID.getKey(fluidHolder.get()).toString();
                 if (string.contains(fluidStr))

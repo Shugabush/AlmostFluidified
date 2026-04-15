@@ -204,7 +204,9 @@ tasks.named('processResources', ProcessResources).configure {
             "forge_version": forge_version.split("\\.")[0], // only specify major version of forge
             "minecraft_version": minecraft_version,
             "gtceu_version": gtceu_version,
-            "kotlin_version": kotlin_version
+            "kotlin_version": kotlin_version,
+            "configuration_version": configuration_version,
+            "almost_unified_version": almost_unified_version
     ]
     inputs.properties(properties)
 
