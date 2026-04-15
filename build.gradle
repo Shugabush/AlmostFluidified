@@ -150,6 +150,9 @@ dependencies {
     // Almost Unified
     modImplementation("com.almostreliable.unified:almostunified-forge-${minecraft_version}-${almost_unified_version}")
 
+    // Kotlin for Forge
+    modImplementation("thedarkcolour.kotlinforforge.forge:kotlinforforge-${kotlin_version}-all")
+
     // GregTech and dependencies
     modImplementation("com.gregtechceu.gtceu:gtceu-${minecraft_version}:${gtceu_version}:slim") { transitive = false }
     modImplementation("com.lowdragmc.ldlib:ldlib-forge-${minecraft_version}:${ldlib_version}") { transitive = false }
@@ -166,8 +169,7 @@ dependencies {
     modImplementation("owmii.powah:Powah-${powah_version}")
 
     // Thermal and dependencies
-    modImplementation("teamcofh.cofhcore:cofh_core-${minecraft_version}-${cofh_core_version}")
-    modImplementation("teamcofh.thermal:thermal_foundation-${minecraft_version}-${thermal_version}")
+    //modImplementation("teamcofh.cofhcore:cofh-core-${cofh_core_version}")
 
     // Mekanism
     modImplementation("mekanism.common:Mekanism-${minecraft_version}-${mekanism_version}")
@@ -202,8 +204,9 @@ tasks.named('processResources', ProcessResources).configure {
             "forge_version": forge_version.split("\\.")[0], // only specify major version of forge
             "minecraft_version": minecraft_version,
             "gtceu_version": gtceu_version,
-            "almost_unified_version": almost_unified_version,
-            "configuration_version": configuration_version
+            "kotlin_version": kotlin_version,
+            "configuration_version": configuration_version,
+            "almost_unified_version": almost_unified_version
     ]
     inputs.properties(properties)
 

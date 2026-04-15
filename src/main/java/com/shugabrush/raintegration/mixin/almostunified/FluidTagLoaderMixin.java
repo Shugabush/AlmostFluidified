@@ -6,8 +6,7 @@ import net.minecraft.tags.TagLoader;
 import net.minecraft.world.level.material.Fluid;
 
 import com.almostreliable.unified.utils.Utils;
-import com.shugabrush.raintegration.MoreUnification;
-import com.shugabrush.raintegration.unification.FluidTagReloadHandler;
+import com.shugabrush.raintegration.RAIntegration;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -28,8 +27,7 @@ public class FluidTagLoaderMixin
     private String directory;
 
     @Inject(method = "build(Ljava/util/Map;)Ljava/util/Map;", at = @At("RETURN"))
-    private <T> void onCreateLoadResult(
-                                        Map< ResourceLocation, List< TagLoader.EntryWithSource>> builders,
+    private <T> void onCreateLoadResult(Map< ResourceLocation, List< TagLoader.EntryWithSource>> map,
                                         CallbackInfoReturnable< Map< ResourceLocation, Collection< T>>> cir)
     {
         if (directory.equals("tags/fluids"))
@@ -37,12 +35,11 @@ public class FluidTagLoaderMixin
             try
             {
                 Map< ResourceLocation, Collection< Holder< Fluid>>> tags = Utils.cast(cir.getReturnValue());
-                FluidTagReloadHandler.initFluidTags(tags);
-                FluidTagReloadHandler.run();
+                RAIntegration.initFluidTags(tags);
             }
             catch (Exception e)
             {
-                MoreUnification.LOGGER.error(e.getMessage(), e);
+                RAIntegration.LOGGER.error(e.getMessage(), e);
             }
         }
     }

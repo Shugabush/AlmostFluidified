@@ -2,7 +2,6 @@ package com.shugabrush.raintegration.mixin.almostunified.compat;
 
 import com.almostreliable.unified.api.recipe.RecipeConstants;
 import com.almostreliable.unified.api.recipe.RecipeContext;
-import com.almostreliable.unified.api.recipe.RecipeUnifierBuilder;
 import com.almostreliable.unified.compat.GregTechModernRecipeUnifier;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -10,7 +9,6 @@ import com.google.gson.JsonObject;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-import java.util.List;
 import java.util.function.Function;
 
 import javax.annotation.Nullable;

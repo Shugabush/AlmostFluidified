@@ -1,26 +1,44 @@
 package com.shugabrush.raintegration.unification;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 
-import com.shugabrush.raintegration.MoreUnification;
+import com.shugabrush.raintegration.RAIntegration;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
 
 public class FluidUnification
 {
 
-    private static final Map< Fluid, List< TagKey< Fluid>>> fluidTagKeyMap = new HashMap<>();
-
-    public static Fluid getFluid(Fluid fluid)
-    {
-        return getFluid(BuiltInRegistries.FLUID.getKey(fluid));
-    }
-
     public static Fluid getFluid(ResourceLocation resourceLocation)
     {
-        return MoreUnification.getReplacementForFluid(resourceLocation);
+        return BuiltInRegistries.FLUID.get(resourceLocation);
+    }
+
+    public static String getUnifiedFluidString(String string)
+    {
+        for (Map.Entry< String, String> entry : RAIntegration.fluids.entrySet())
+        {
+            String tag = entry.getKey();
+            String fluid = entry.getValue();
+
+            Collection< Holder< Fluid>> fluidList = RAIntegration.getFluids(new ResourceLocation(tag));
+            for (Holder< Fluid> fluidHolder : fluidList)
+            {
+                String fluidStr = BuiltInRegistries.FLUID.getKey(fluidHolder.get()).toString();
+                if (string.contains(fluidStr))
+                {
+                    return string.replaceAll(fluidStr, fluid);
+                }
+            }
+            if (string.contains(tag))
+            {
+                return string.replaceAll(tag, fluid);
+            }
+        }
+        return string;
     }
 }
