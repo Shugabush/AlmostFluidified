@@ -84,18 +84,16 @@ public class FluidReplacementMap
     @Nullable
     private ResourceLocation getOverrideForTag(UnifyTag< Fluid> tag, List< ResourceLocation> fluids)
     {
-        for (String override : ConfigHolder.instance.fluidConfigs.priorityOverrides)
+        String priorityOverride = ConfigHolder.instance.fluidConfigs.getPriorityOverride(tag.location());
+        if (priorityOverride != null)
         {
-            if (override == tag.location().getNamespace())
-            {
-                ResourceLocation fluid = findFluidByNameSpace(fluids, override);
-                if (fluid != null)
-                    return fluid;
-                MoreUnification.LOGGER.warn(
-                        "Priority override mod '{}' for tag '{}' does not contain a valid fluid. Falling back to default priority.",
-                        override,
-                        tag.location());
-            }
+            ResourceLocation fluid = findFluidByNameSpace(fluids, priorityOverride);
+            if (fluid != null)
+                return fluid;
+            MoreUnification.LOGGER.warn(
+                    "Priority override mod '{}' for tag '{}' does not contain a valid fluid. Falling back to default priority.",
+                    priorityOverride,
+                    tag.location());
         }
         return null;
     }

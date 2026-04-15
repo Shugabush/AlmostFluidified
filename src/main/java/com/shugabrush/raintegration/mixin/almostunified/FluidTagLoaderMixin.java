@@ -22,6 +22,7 @@ import java.util.Map;
 @Mixin(TagLoader.class)
 public class FluidTagLoaderMixin
 {
+
     @Shadow
     @Final
     private String directory;

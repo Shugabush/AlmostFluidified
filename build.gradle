@@ -166,7 +166,8 @@ dependencies {
     modImplementation("owmii.powah:Powah-${powah_version}")
 
     // Thermal and dependencies
-    //modImplementation("teamcofh.cofhcore:cofh-core-${cofh_core_version}")
+    modImplementation("teamcofh.cofhcore:cofh_core-${minecraft_version}-${cofh_core_version}")
+    modImplementation("teamcofh.thermal:thermal_foundation-${minecraft_version}-${thermal_version}")
 
     // Mekanism
     modImplementation("mekanism.common:Mekanism-${minecraft_version}-${mekanism_version}")

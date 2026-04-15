@@ -11,10 +11,7 @@ import dev.toma.configuration.config.Config;
 import dev.toma.configuration.config.Configurable;
 import dev.toma.configuration.config.format.ConfigFormats;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -32,14 +29,30 @@ public class ConfigHolder
         {
             instance = Configuration.registerConfig(ConfigHolder.class, ConfigFormats.json())
                     .getConfigInstance();
+            instance.fluidConfigs.init();
         }
     }
 
     @Configurable
     public FluidConfigs fluidConfigs = new FluidConfigs();
 
-    public static class FluidConfigs
+    public class FluidConfigs
     {
+
+        public void init()
+        {
+            for (PriorityOverride priority : priorityOverrides)
+            {
+                try
+                {
+                    priorityOverrideMap.put(ResourceLocation.parse(priority.modId), priority.fluidTag);
+                }
+                catch (Exception e)
+                {
+                    MoreUnification.LOGGER.error(e.getMessage(), e);
+                }
+            }
+        }
 
         @Nullable
         private Set< UnifyTag< Fluid>> bakedTagsCache;
@@ -51,9 +64,27 @@ public class ConfigHolder
                 "minecraft", "mekanism", "gtceu"
         };
 
+        public class PriorityOverride
+        {
+            @Configurable
+            public String modId = "";
+
+            @Configurable
+            public String fluidTag = "";
+        }
+
         @Configurable
-        @Configurable.Comment("Mod priorities. Same as almost unified except for fluids, not items and blocks.")
-        public String[] priorityOverrides = {};
+        @Configurable.Comment("Priority overrides. Same as almost unified except for fluids, not items and blocks.")
+        public PriorityOverride[] priorityOverrides =
+        {
+                new PriorityOverride()
+        };
+        Map< ResourceLocation, String> priorityOverrideMap = new HashMap<>();
+
+        public String getPriorityOverride(ResourceLocation location)
+        {
+            return priorityOverrideMap.get(location);
+        }
 
         @Configurable
         @Configurable.Comment("Possible fluid tag formats for each fluid")

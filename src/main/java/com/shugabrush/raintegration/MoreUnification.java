@@ -1,11 +1,5 @@
 package com.shugabrush.raintegration;
 
-import com.almostreliable.unified.utils.UnifyTag;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.shugabrush.raintegration.unification.FluidReplacementData;
-import com.shugabrush.raintegration.unification.FluidUnifyTag;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -16,16 +10,23 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+
+import com.almostreliable.unified.utils.UnifyTag;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.shugabrush.raintegration.unification.FluidReplacementData;
+import com.shugabrush.raintegration.unification.FluidUnifyTag;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
+
+import javax.annotation.Nullable;
 
 @Mod(MoreUnification.MOD_ID)
 @SuppressWarnings("removal")
@@ -61,6 +62,8 @@ public class MoreUnification
     private void clientSetup(final FMLClientSetupEvent event)
     {}
 
+    private static final Map<String, JsonElement> recipesByType = new HashMap<>();
+
     /**
      * Create a ResourceLocation in the format "modid:path"
      *
@@ -77,9 +80,14 @@ public class MoreUnification
         fluidReplacementData = FluidReplacementData.load(tags);
     }
 
-    public static void onRecipeManagerReload(Map<ResourceLocation, JsonElement> recipes)
+    public static void onRecipeManagerReload(Map< ResourceLocation, JsonElement> recipes)
     {
         LOGGER.info("Recipe Count: " + recipes.size());
+        recipesByType.clear();
+        recipes.forEach((location, recipe) ->
+        {
+            LOGGER.info(location);
+        });
     }
 
     public static Fluid getReplacementForFluid(ResourceLocation fluid)
@@ -92,45 +100,19 @@ public class MoreUnification
         return getReplacementForFluid(BuiltInRegistries.FLUID.getKey(fluid));
     }
 
-    public static UnifyTag<Fluid> getPreferredTagForFluid(ResourceLocation fluid)
+    public static UnifyTag< Fluid> getPreferredTagForFluid(ResourceLocation fluid)
     {
         return fluidReplacementData.replacementMap().getPreferredTagForFluid(fluid);
     }
 
-    public static ResourceLocation getPreferredFluidForTag(UnifyTag<Fluid> tag, Predicate<ResourceLocation> fluidFilter)
+    public static ResourceLocation getPreferredFluidForTag(UnifyTag< Fluid> tag,
+                                                           Predicate< ResourceLocation> fluidFilter)
     {
         return fluidReplacementData.replacementMap().getPreferredFluidForTag(tag, fluidFilter);
     }
 
-    public static JsonObject tryCreateContentReplacement(@Nullable JsonElement element)
-    {
-        if (element instanceof JsonObject object && element.toString().contains("fluid"))
-        {
-            return tryCreateContentReplacement(object);
-        }
-        return null;
-    }
-
-    public static JsonObject tryCreateContentReplacement(@Nullable JsonObject object)
-    {
-        if (object == null) return null;
-
-        var fluidJson = object.get("fluid");
-        if (fluidJson instanceof JsonArray fluidArray)
-        {
-            fluidArray = tryCreateContentReplacement(fluidArray);
-            object.remove("fluid");
-            object.add("fluid", fluidArray);
-        }
-        else if (fluidJson instanceof JsonObject fluidObj)
-        {
-            LOGGER.info("Here");
-        }
-        return object;
-    }
-
     // This function is for debugging purposes only. It will slow down the final build.
-    public static void writeAllRecipes(Map<ResourceLocation, JsonElement> recipes)
+    public static void writeAllRecipes(Map< ResourceLocation, JsonElement> recipes)
     {
         recipes.forEach((location, recipe) ->
         {
@@ -168,7 +150,9 @@ public class MoreUnification
                     }
                 }
 
-                Files.writeString(Path.of("json-recipes/" + location.getNamespace() + "/" + location.getPath() + ".json"), jsonString);
+                Files.writeString(
+                        Path.of("json-recipes/" + location.getNamespace() + "/" + location.getPath() + ".json"),
+                        jsonString);
             }
             catch (IOException e)
             {
@@ -194,8 +178,10 @@ public class MoreUnification
                                 var tag = valueObj.get("tag");
                                 if (tag != null && isValidFluid(tag.toString()))
                                 {
-                                    UnifyTag<Fluid> fluidTag = FluidUnifyTag.fluid(ResourceLocation.tryParse(tag.getAsString()));
-                                    ResourceLocation fluidLocation = MoreUnification.getPreferredFluidForTag(fluidTag, r -> true);
+                                    UnifyTag< Fluid> fluidTag = FluidUnifyTag
+                                            .fluid(ResourceLocation.tryParse(tag.getAsString()));
+                                    ResourceLocation fluidLocation = MoreUnification.getPreferredFluidForTag(fluidTag,
+                                            r -> true);
                                     if (fluidLocation != null)
                                     {
                                         valueObj.remove("tag");
@@ -207,8 +193,10 @@ public class MoreUnification
                                     var fluid = valueObj.get("Fluid");
                                     if (fluid != null && isValidFluid(fluid.toString()))
                                     {
-                                        ResourceLocation oldFluidLocation = ResourceLocation.tryParse(fluid.getAsString());
-                                        ResourceLocation fluidLocation = BuiltInRegistries.FLUID.getKey(MoreUnification.getReplacementForFluid(oldFluidLocation));
+                                        ResourceLocation oldFluidLocation = ResourceLocation
+                                                .tryParse(fluid.getAsString());
+                                        ResourceLocation fluidLocation = BuiltInRegistries.FLUID
+                                                .getKey(MoreUnification.getReplacementForFluid(oldFluidLocation));
 
                                         if (oldFluidLocation != fluidLocation)
                                         {
@@ -230,7 +218,8 @@ public class MoreUnification
     {
         for (String f : ConfigHolder.instance.fluidConfigs.fluids)
         {
-            if (f == fluid) return true;
+            if (f == fluid)
+                return true;
         }
         return false;
     }
