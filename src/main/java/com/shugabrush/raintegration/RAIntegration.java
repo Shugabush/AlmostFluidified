@@ -182,6 +182,8 @@ public class RAIntegration
                     JsonElement unifiedPropertyElement = unifyFluidRecipe(propertyElement);
                     if (!propertyElement.equals(unifiedPropertyElement))
                     {
+                        // Note: this can run multiple times per element,
+                        // Might be worth checking if the propertyElement is a primitive first
                         object.remove(currentProperty);
                         if (currentProperty.equals("tag"))
                         {
