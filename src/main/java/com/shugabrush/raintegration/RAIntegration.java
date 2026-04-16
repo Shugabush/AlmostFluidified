@@ -1,7 +1,7 @@
 package com.shugabrush.raintegration;
 
+import com.almostreliable.unified.config.Config;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.MinecraftForge;
@@ -19,6 +19,7 @@ import com.shugabrush.raintegration.unification.FluidUnification;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 @Mod(RAIntegration.MOD_ID)
@@ -29,12 +30,14 @@ public class RAIntegration
     public static final String MOD_ID = "raintegration";
     public static final Logger LOGGER = LogManager.getLogger();
 
-    public static final Map< String, String> fluids = Map.of("forge:steam", "gtceu:steam", "forge:oxygen",
-            "gtceu:oxygen", "forge:hydrogen", "gtceu:hydrogen");
+    static final Set< String> propertyWhitelist = Set.of("tag", "fluid", "value", "input", "output", "inputs",
+            "outputs", "fluidInput", "fluidOutput", "content");
+
+    public static Map< String, String> tagFluids = new HashMap<>();
 
     private static Map< ResourceLocation, Collection< Holder< Fluid>>> fluidTags = new HashMap<>();
 
-    private static Map<Fluid, ResourceLocation> tagFluids = new HashMap<>();
+    @Nullable private static FluidUnifyConfig unifyConfig;
 
     public RAIntegration()
     {
@@ -80,22 +83,15 @@ public class RAIntegration
         return new ResourceLocation(MOD_ID, path);
     }
 
-    public static void initFluidTags(Map< ResourceLocation, Collection< Holder< Fluid>>> tags)
+    public static void onTagLoaderReload(Map< ResourceLocation, Collection< Holder< Fluid>>> tags)
     {
+        unifyConfig = Config.load("fluids", new FluidUnifyConfig.Serializer());
+
         fluidTags = tags;
-        for (String priorityFluid : ConfigHolder.instance.fluidConfigs.priorityFluids)
+        Set<ResourceLocation> bakedTags = unifyConfig.bakeAndValidateTags(tags);
+        for (String priority : unifyConfig.getModPriorities())
         {
-            fluidTags.forEach((location, holder) ->
-            {
-                for (Holder<Fluid> fluidHolder : holder)
-                {
-                    ResourceLocation fluidLocation = BuiltInRegistries.FLUID.getKey(fluidHolder.get());
-                    if (fluidLocation.toString() == priorityFluid)
-                    {
-                        tagFluids.put(fluidHolder.get(), fluidLocation);
-                    }
-                }
-            });
+            
         }
     }
 
@@ -116,9 +112,6 @@ public class RAIntegration
         long durationMs = (endTime - startTime) / 1_000_000; // Convert to milliseconds
         LOGGER.info("Fluids unified for recipes in {} ms", durationMs);
     }
-
-    static final Set< String> propertyWhitelist = Set.of("tag", "fluid", "value", "input", "output", "inputs",
-            "outputs", "fluidInput", "fluidOutput", "content");
 
     public static JsonElement unifyFluidRecipe(JsonElement element)
     {

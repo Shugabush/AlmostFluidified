@@ -20,7 +20,7 @@ public class FluidUnification
 
     public static String getUnifiedFluidString(String string)
     {
-        for (Map.Entry< String, String> entry : RAIntegration.fluids.entrySet())
+        for (Map.Entry< String, String> entry : RAIntegration.tagFluids.entrySet())
         {
             String tag = entry.getKey();
             String fluid = entry.getValue();

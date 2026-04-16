@@ -35,7 +35,7 @@ public class FluidTagLoaderMixin
             try
             {
                 Map< ResourceLocation, Collection< Holder< Fluid>>> tags = Utils.cast(cir.getReturnValue());
-                RAIntegration.initFluidTags(tags);
+                RAIntegration.onTagLoaderReload(tags);
             }
             catch (Exception e)
             {
