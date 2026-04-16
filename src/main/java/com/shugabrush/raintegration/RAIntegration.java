@@ -32,7 +32,7 @@ public class RAIntegration
     public static final Logger LOGGER = LogManager.getLogger();
 
     static final Set< String> propertyWhitelist = Set.of("tag", "fluid", "value", "input", "output", "inputs",
-            "outputs", "fluidInput", "fluidOutput", "content");
+            "outputs", "fluidInput", "fluidOutput", "inputFluid", "outputFluid", "content");
 
     // Resource location is the tag, the fluid list represents all fluids that have that tag
     private static Map< ResourceLocation, List< Fluid>> fluidCollections = new HashMap<>();
@@ -109,6 +109,11 @@ public class RAIntegration
                     ResourceLocation fluidLocation = BuiltInRegistries.FLUID.getKey(fluid);
                     String fluidLocationStr = fluidLocation.toString();
 
+                    if (fluidLocationStr.contains("honey"))
+                    {
+                        LOGGER.info("{}, {}", fluidLocationStr, location.toString());
+                    }
+
                     // Flowing fluids generally aren't part of recipes so they don't need to be unified
                     if (fluidLocationStr.contains("flowing"))
                         continue;
@@ -179,8 +184,12 @@ public class RAIntegration
                 if (propertyWhitelist.contains(currentProperty))
                 {
                     JsonElement propertyElement = object.get(currentProperty);
+                    if (object.toString().contains("essence") || object.toString().contains("experience"))
+                    {
+                        LOGGER.info("Here");
+                    }
                     JsonElement unifiedPropertyElement = unifyFluidRecipe(propertyElement);
-                    if (!propertyElement.equals(unifiedPropertyElement))
+                    if (propertyElement instanceof JsonPrimitive && !propertyElement.equals(unifiedPropertyElement))
                     {
                         // Note: this can run multiple times per element,
                         // Might be worth checking if the propertyElement is a primitive first
@@ -207,18 +216,34 @@ public class RAIntegration
             List< Fluid> fluids = entry.getValue();
             Fluid unifiedFluid = unifiedFluids.get(tag);
             String unifiedFluidStr = BuiltInRegistries.FLUID.getKey(unifiedFluid).toString();
+            for (Fluid fluid : fluids)
+            {
+                String fluidStr = BuiltInRegistries.FLUID.getKey(fluid).toString();
+                if (fluid != unifiedFluid)
+                {
+                    if (originalFluid.equals((fluidStr)))
+                    {
+                        return unifiedFluidStr;
+                    }
+                    else if (originalFluid.contains(fluidStr))
+                    {
+                        return originalFluid.replace(fluidStr, unifiedFluidStr);
+                    }
+                }
+                // else if (originalFluid.contains("honey") && fluidStr.contains("honey"))
+                // {
+                // LOGGER.info("ignoring {}, doesn't contain {}. Unified fluid is {}", originalFluid, fluidStr,
+                // unifiedFluidStr);
+                // }
+            }
             if (originalFluid.contains(tag.toString()))
             {
                 return originalFluid.replace(tag.toString(), unifiedFluidStr);
             }
-            for (Fluid fluid : fluids)
-            {
-                String fluidStr = BuiltInRegistries.FLUID.getKey(fluid).toString();
-                if (fluid != unifiedFluid && originalFluid.contains(fluidStr))
-                {
-                    return originalFluid.replace(fluidStr, unifiedFluidStr);
-                }
-            }
+            // else
+            // {
+            // LOGGER.info("ignoring {}, doesn't contain {}", originalFluid, tag.toString());
+            // }
         }
         return originalFluid;
     }

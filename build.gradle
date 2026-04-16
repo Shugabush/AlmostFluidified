@@ -185,6 +185,9 @@ dependencies {
 
     // Stargate Journey
     modImplementation("net.povstalec.sgjourney:Stargate Journey-${minecraft_version}-${stargate_journey_version}")
+
+    // Productive Bees
+    modImplementation("cy.jdkdigital.productivebees:productivebees-${minecraft_version}-${productivebees_version}")
 }
 
 // See com.example.examplemod.mixin.DummyMixin for information about mixins
