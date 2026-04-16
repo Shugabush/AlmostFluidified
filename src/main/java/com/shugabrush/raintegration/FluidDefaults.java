@@ -4,18 +4,17 @@ import java.util.List;
 
 public class FluidDefaults
 {
-    public static final List<String> FLUIDS = List.of(
+
+    public static final List< String> FLUIDS = List.of(
             "hydrogen",
             "oxygen",
             "steam",
             "chlorine",
-            "ethylene"
-    );
+            "ethylene");
 
-    public static List<String> getModPriorities()
+    public static List< String> getModPriorities()
     {
         return List.of(
-                "minecraft",
                 "kubejs",
                 "crafttweaker",
                 "mekanism",
@@ -25,7 +24,7 @@ public class FluidDefaults
                 "immersiveengineering");
     }
 
-    public static List<String> getTags()
+    public static List< String> getTags()
     {
         return List.of("forge:{fluid}");
     }

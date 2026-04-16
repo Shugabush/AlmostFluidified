@@ -1,25 +1,26 @@
 package com.shugabrush.raintegration;
 
-import com.almostreliable.unified.config.Config;
-import com.almostreliable.unified.utils.JsonUtils;
-import com.google.gson.JsonObject;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 
-import javax.annotation.Nullable;
+import com.almostreliable.unified.config.Config;
+import com.almostreliable.unified.utils.JsonUtils;
+import com.google.gson.JsonObject;
+
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
 
 public class FluidUnifyConfig extends Config
 {
+
     public FluidUnifyConfig(
-            List<String> modPriorities,
-            List<String> unbakedTags,
-            List<String> fluids,
-            Map<ResourceLocation, String> priorityOverrides
-    )
+                            List< String> modPriorities,
+                            List< String> unbakedTags,
+                            List< String> fluids,
+                            Map< ResourceLocation, String> priorityOverrides)
     {
         this.modPriorities = modPriorities;
         this.unbakedTags = unbakedTags;
@@ -27,43 +28,43 @@ public class FluidUnifyConfig extends Config
         this.priorityOverrides = priorityOverrides;
     }
 
-    private List<String> modPriorities;
-    private List<String> unbakedTags;
-    private List<String> fluids;
-    private Map<ResourceLocation, String> priorityOverrides;
+    private List< String> modPriorities;
+    private List< String> unbakedTags;
+    private List< String> fluids;
+    private Map< ResourceLocation, String> priorityOverrides;
 
     @Nullable
-    private Set<ResourceLocation> bakedTagsCache;
+    private Set< ResourceLocation> bakedTagsCache;
 
-    public List<String> getModPriorities()
+    public List< String> getModPriorities()
     {
         return Collections.unmodifiableList(modPriorities);
     }
 
-    public Map<ResourceLocation, String> getPriorityOverrides()
+    public Map< ResourceLocation, String> getPriorityOverrides()
     {
         return Collections.unmodifiableMap(priorityOverrides);
     }
 
-    public Set<ResourceLocation> bakeTags()
+    public Set< ResourceLocation> bakeTags()
     {
         return bakeTags($ -> true);
     }
 
-    public Set<ResourceLocation> bakeAndValidateTags(Map<ResourceLocation, Collection<Holder<Fluid>>> tags)
+    public Set< ResourceLocation> bakeAndValidateTags(Map< ResourceLocation, Collection< Holder< Fluid>>> tags)
     {
         return bakeTags(tags::containsKey);
     }
 
-    private Set<ResourceLocation> bakeTags(Predicate<ResourceLocation> tagValidator)
+    private Set< ResourceLocation> bakeTags(Predicate< ResourceLocation> tagValidator)
     {
         if (bakedTagsCache != null)
         {
             return bakedTagsCache;
         }
 
-        Set<ResourceLocation> result = new HashSet<>();
-        Set<ResourceLocation> wrongTags = new HashSet<>();
+        Set< ResourceLocation> result = new HashSet<>();
+        Set< ResourceLocation> wrongTags = new HashSet<>();
 
         for (String tag : unbakedTags)
         {
@@ -95,7 +96,7 @@ public class FluidUnifyConfig extends Config
         return result;
     }
 
-    public static class Serializer extends Config.Serializer<FluidUnifyConfig>
+    public static class Serializer extends Config.Serializer< FluidUnifyConfig>
     {
 
         public static final String MOD_PRIORITIES = "modPriorities";
@@ -106,26 +107,24 @@ public class FluidUnifyConfig extends Config
         @Override
         public FluidUnifyConfig deserialize(JsonObject json)
         {
-            List<String> modPriorities = safeGet(() -> JsonUtils.toList(json.getAsJsonArray(MOD_PRIORITIES)), FluidDefaults.getModPriorities());
-            List<String> tags = safeGet(() -> JsonUtils.toList(json.getAsJsonArray(TAGS)), FluidDefaults.getTags());
-            List<String> fluids = safeGet(() -> JsonUtils.toList(json.getAsJsonArray(FLUIDS)), FluidDefaults.FLUIDS);
+            List< String> modPriorities = safeGet(() -> JsonUtils.toList(json.getAsJsonArray(MOD_PRIORITIES)),
+                    FluidDefaults.getModPriorities());
+            List< String> tags = safeGet(() -> JsonUtils.toList(json.getAsJsonArray(TAGS)), FluidDefaults.getTags());
+            List< String> fluids = safeGet(() -> JsonUtils.toList(json.getAsJsonArray(FLUIDS)), FluidDefaults.FLUIDS);
 
-            Map<ResourceLocation, String> priorityOverrides = safeGet(
+            Map< ResourceLocation, String> priorityOverrides = safeGet(
                     () -> JsonUtils.deserializeMap(
                             json,
                             PRIORITY_OVERRIDES,
-                            e-> new ResourceLocation(e.getKey()),
-                            e -> e.getValue().getAsString()
-                    ),
-                    new HashMap<>()
-            );
+                            e -> new ResourceLocation(e.getKey()),
+                            e -> e.getValue().getAsString()),
+                    new HashMap<>());
 
             return new FluidUnifyConfig(
                     modPriorities,
                     tags,
                     fluids,
-                    priorityOverrides
-            );
+                    priorityOverrides);
         }
 
         @Override

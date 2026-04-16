@@ -1,7 +1,7 @@
 package com.shugabrush.raintegration;
 
-import com.almostreliable.unified.config.Config;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.MinecraftForge;
@@ -14,13 +14,14 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import com.almostreliable.unified.config.Config;
 import com.google.gson.*;
-import com.shugabrush.raintegration.unification.FluidUnification;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nullable;
 import java.util.*;
+
+import javax.annotation.Nullable;
 
 @Mod(RAIntegration.MOD_ID)
 @SuppressWarnings("removal")
@@ -33,11 +34,14 @@ public class RAIntegration
     static final Set< String> propertyWhitelist = Set.of("tag", "fluid", "value", "input", "output", "inputs",
             "outputs", "fluidInput", "fluidOutput", "content");
 
-    public static Map< String, String> tagFluids = new HashMap<>();
+    // Resource location is the tag, the fluid list represents all fluids that have that tag
+    private static Map< ResourceLocation, List< Fluid>> fluidCollections = new HashMap<>();
 
-    private static Map< ResourceLocation, Collection< Holder< Fluid>>> fluidTags = new HashMap<>();
+    // Resource location is the tag, the fluid is the unified fluid for that fluid tag
+    public static Map< ResourceLocation, Fluid> unifiedFluids = new HashMap<>();
 
-    @Nullable private static FluidUnifyConfig unifyConfig;
+    @Nullable
+    private static FluidUnifyConfig unifyConfig;
 
     public RAIntegration()
     {
@@ -87,17 +91,38 @@ public class RAIntegration
     {
         unifyConfig = Config.load("fluids", new FluidUnifyConfig.Serializer());
 
-        fluidTags = tags;
-        Set<ResourceLocation> bakedTags = unifyConfig.bakeAndValidateTags(tags);
-        for (String priority : unifyConfig.getModPriorities())
+        Set< ResourceLocation> bakedTags = unifyConfig.bakeAndValidateTags(tags);
+        bakedTags.forEach(location ->
         {
-            
-        }
-    }
+            Collection< Holder< Fluid>> fluidHolders = tags.get(location);
+            if (fluidHolders != null)
+            {
+                List< Fluid> fluids = new ArrayList<>();
+                fluidHolders.forEach(holder ->
+                {
+                    fluids.add(holder.get());
+                });
 
-    public static Collection< Holder< Fluid>> getFluids(ResourceLocation resourceLocation)
-    {
-        return fluidTags.get(resourceLocation);
+                fluidCollections.put(location, fluids);
+                for (Fluid fluid : fluids)
+                {
+                    ResourceLocation fluidLocation = BuiltInRegistries.FLUID.getKey(fluid);
+                    String fluidLocationStr = fluidLocation.toString();
+
+                    // Flowing fluids generally aren't part of recipes so they don't need to be unified
+                    if (fluidLocationStr.contains("flowing"))
+                        continue;
+
+                    for (String priority : unifyConfig.getModPriorities())
+                    {
+                        if (fluidLocationStr.split(":")[0].equals(priority) && !unifiedFluids.containsKey(location))
+                        {
+                            unifiedFluids.put(location, fluid);
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public static void onRecipeManagerReload(Map< ResourceLocation, JsonElement> recipes)
@@ -121,9 +146,19 @@ public class RAIntegration
         JsonElement copyElement = element.deepCopy();
         if (copyElement instanceof JsonPrimitive primitive)
         {
-            String primitiveString = FluidUnification.getUnifiedFluidString(primitive.toString());
-            JsonPrimitive unifiedPrimitive = JsonParser.parseString(primitiveString).getAsJsonPrimitive();
-            return unifiedPrimitive;
+            String primitiveString = primitive.toString();
+            try
+            {
+                primitiveString = primitiveString.substring(primitiveString.indexOf("\"") + 1,
+                        primitiveString.lastIndexOf("\""));
+                String unifiedPrimitiveString = getReplacementForFluid(primitiveString);
+                return JsonParser.parseString("\"" + unifiedPrimitiveString + "\"").getAsJsonPrimitive();
+            }
+            catch (Exception e)
+            {
+                String unifiedPrimitiveString = getReplacementForFluid(primitiveString);
+                return JsonParser.parseString(unifiedPrimitiveString).getAsJsonPrimitive();
+            }
         }
         else if (copyElement instanceof JsonArray array)
         {
@@ -160,5 +195,29 @@ public class RAIntegration
         }
 
         return copyElement;
+    }
+
+    public static String getReplacementForFluid(String originalFluid)
+    {
+        for (Map.Entry< ResourceLocation, List< Fluid>> entry : fluidCollections.entrySet())
+        {
+            ResourceLocation tag = entry.getKey();
+            List< Fluid> fluids = entry.getValue();
+            Fluid unifiedFluid = unifiedFluids.get(tag);
+            String unifiedFluidStr = BuiltInRegistries.FLUID.getKey(unifiedFluid).toString();
+            if (originalFluid.contains(tag.toString()))
+            {
+                return originalFluid.replace(tag.toString(), unifiedFluidStr);
+            }
+            for (Fluid fluid : fluids)
+            {
+                String fluidStr = BuiltInRegistries.FLUID.getKey(fluid).toString();
+                if (fluid != unifiedFluid && originalFluid.contains(fluidStr))
+                {
+                    return originalFluid.replace(fluidStr, unifiedFluidStr);
+                }
+            }
+        }
+        return originalFluid;
     }
 }
