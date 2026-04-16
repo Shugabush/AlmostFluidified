@@ -200,7 +200,7 @@ public class RAIntegration
                 {
                     JsonElement propertyElement = object.get(currentProperty);
                     JsonElement unifiedPropertyElement = unifyFluidRecipe(propertyElement);
-                    if (!propertyElement.equals(unifiedPropertyElement))
+                    if (!propertyElement.toString().equals(unifiedPropertyElement.toString()))
                     {
                         object.remove(currentProperty);
                         if (currentProperty.equals("tag"))
