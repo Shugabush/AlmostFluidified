@@ -92,42 +92,44 @@ public class RAIntegration
         unifyConfig = Config.load("fluids", new FluidUnifyConfig.Serializer());
 
         Set< ResourceLocation> bakedTags = unifyConfig.bakeAndValidateTags(tags);
-        bakedTags.forEach(location ->
+
+        for (String priority : unifyConfig.getModPriorities())
         {
-            Collection< Holder< Fluid>> fluidHolders = tags.get(location);
-            if (fluidHolders != null)
+            bakedTags.forEach(location ->
             {
-                List< Fluid> fluids = new ArrayList<>();
-                fluidHolders.forEach(holder ->
+                Collection< Holder< Fluid>> fluidHolders = tags.get(location);
+                if (fluidHolders != null)
                 {
-                    fluids.add(holder.get());
-                });
-
-                fluidCollections.put(location, fluids);
-                for (Fluid fluid : fluids)
-                {
-                    ResourceLocation fluidLocation = BuiltInRegistries.FLUID.getKey(fluid);
-                    String fluidLocationStr = fluidLocation.toString();
-
-                    if (fluidLocationStr.contains("honey"))
+                    List< Fluid> fluids = new ArrayList<>();
+                    fluidHolders.forEach(holder ->
                     {
-                        LOGGER.info("{}, {}", fluidLocationStr, location.toString());
-                    }
+                        fluids.add(holder.get());
+                    });
 
-                    // Flowing fluids generally aren't part of recipes so they don't need to be unified
-                    if (fluidLocationStr.contains("flowing"))
-                        continue;
-
-                    for (String priority : unifyConfig.getModPriorities())
+                    fluidCollections.put(location, fluids);
+                    for (Fluid fluid : fluids)
                     {
+                        ResourceLocation fluidLocation = BuiltInRegistries.FLUID.getKey(fluid);
+                        String fluidLocationStr = fluidLocation.toString();
+
+                        if (fluidLocationStr.contains("honey"))
+                        {
+                            LOGGER.info("{}, {}", fluidLocationStr, location.toString());
+                        }
+
+                        // Flowing fluids generally aren't part of recipes so they don't need to be unified
+                        if (fluidLocationStr.contains("flowing"))
+                            continue;
+
+                        String temp = fluidLocationStr.split(":")[0];
                         if (fluidLocationStr.split(":")[0].equals(priority) && !unifiedFluids.containsKey(location))
                         {
                             unifiedFluids.put(location, fluid);
                         }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     public static void onRecipeManagerReload(Map< ResourceLocation, JsonElement> recipes)
@@ -184,15 +186,9 @@ public class RAIntegration
                 if (propertyWhitelist.contains(currentProperty))
                 {
                     JsonElement propertyElement = object.get(currentProperty);
-                    if (object.toString().contains("essence") || object.toString().contains("experience"))
-                    {
-                        LOGGER.info("Here");
-                    }
                     JsonElement unifiedPropertyElement = unifyFluidRecipe(propertyElement);
-                    if (propertyElement instanceof JsonPrimitive && !propertyElement.equals(unifiedPropertyElement))
+                    if (!propertyElement.equals(unifiedPropertyElement))
                     {
-                        // Note: this can run multiple times per element,
-                        // Might be worth checking if the propertyElement is a primitive first
                         object.remove(currentProperty);
                         if (currentProperty.equals("tag"))
                         {
@@ -230,20 +226,11 @@ public class RAIntegration
                         return originalFluid.replace(fluidStr, unifiedFluidStr);
                     }
                 }
-                // else if (originalFluid.contains("honey") && fluidStr.contains("honey"))
-                // {
-                // LOGGER.info("ignoring {}, doesn't contain {}. Unified fluid is {}", originalFluid, fluidStr,
-                // unifiedFluidStr);
-                // }
             }
             if (originalFluid.contains(tag.toString()))
             {
                 return originalFluid.replace(tag.toString(), unifiedFluidStr);
             }
-            // else
-            // {
-            // LOGGER.info("ignoring {}, doesn't contain {}", originalFluid, tag.toString());
-            // }
         }
         return originalFluid;
     }

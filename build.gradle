@@ -188,6 +188,9 @@ dependencies {
 
     // Productive Bees
     modImplementation("cy.jdkdigital.productivebees:productivebees-${minecraft_version}-${productivebees_version}")
+
+    // The Bumblezone
+    modImplementation("com.telepathicgrunt.the_bumblezone.neoforge:the_bumblezone-${the_bumblezone_version}+${minecraft_version}-forge")
 }
 
 // See com.example.examplemod.mixin.DummyMixin for information about mixins
