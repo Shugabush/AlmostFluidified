@@ -36,12 +36,6 @@ Example Description
         ordering = "NONE"
         side = "BOTH"
     [[dependencies.${mod_id}]]
-        modId = "configuration"
-        mandatory = true
-        versionRange = "[${configuration_version},)"
-        ordering = "NONE"
-        side = "BOTH"
-    [[dependencies.${mod_id}]]
         modId = "almostunified"
         mandatory = true
         versionRange = "[${almost_unified_version},)"
