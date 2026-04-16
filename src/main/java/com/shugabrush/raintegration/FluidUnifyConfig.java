@@ -49,7 +49,8 @@ public class FluidUnifyConfig extends Config
         return Collections.unmodifiableMap(priorityOverrides);
     }
 
-    public Map<ResourceLocation, Set<ResourceLocation>> getTagOwnerships() {
+    public Map< ResourceLocation, Set< ResourceLocation>> getTagOwnerships()
+    {
         return Collections.unmodifiableMap(tagOwnerships);
     }
 

@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-@Mixin(TagLoader.class)
+@Mixin(value = TagLoader.class, priority = 1_001)
 public class FluidTagLoaderMixin
 {
 

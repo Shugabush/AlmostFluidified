@@ -14,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
 
-// inject after most mods but before KubeJS
-@Mixin(value = RecipeManager.class, priority = 1_099)
+// inject after most mods, including KubeJS
+@Mixin(value = RecipeManager.class, priority = 1_101)
 public class FluidRecipeManagerMixin
 {
 

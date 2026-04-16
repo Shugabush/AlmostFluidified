@@ -30,11 +30,13 @@ public class RAIntegration
     public static final String MOD_ID = "raintegration";
     public static final Logger LOGGER = LogManager.getLogger();
 
+    // A whitelist of properties to check for unification for. If any recipes don't work, check this list and see if the
+    // element's property name is in it.
     static final Set< String> propertyWhitelist = Set.of("tag", "fluid", "value", "input", "output", "inputs",
-            "outputs", "fluidInput", "fluidOutput", "inputFluid", "outputFluid", "content");
+            "outputs", "fluidInput", "fluidOutput", "inputFluid", "outputFluid", "content", "result");
 
     // Resource location is the tag, the fluid list represents all fluids that have that tag
-    private static Map< ResourceLocation, Collection<Fluid>> fluidCollections = new HashMap<>();
+    private static Map< ResourceLocation, Collection< Fluid>> fluidCollections = new HashMap<>();
 
     // Resource location is the tag, the fluid is the unified fluid for that fluid tag
     public static Map< ResourceLocation, Fluid> unifiedFluids = new HashMap<>();
@@ -86,16 +88,16 @@ public class RAIntegration
     {
         Set< ResourceLocation> bakedTags = unifyConfig.bakeAndValidateTags(tags);
 
-        List<String> modPriorities = unifyConfig.getModPriorities();
+        List< String> modPriorities = unifyConfig.getModPriorities();
 
-        Map<ResourceLocation, Set<ResourceLocation>> tagOwnerships = unifyConfig.getTagOwnerships();
+        Map< ResourceLocation, Set< ResourceLocation>> tagOwnerships = unifyConfig.getTagOwnerships();
 
         for (String priority : modPriorities)
         {
             bakedTags.forEach(location ->
             {
-                Collection<Holder<Fluid>> fluidHolders = tags.get(location);
-                Collection<Fluid> fluids = new ArrayList<>();
+                Collection< Holder< Fluid>> fluidHolders = tags.get(location);
+                Collection< Fluid> fluids = new ArrayList<>();
 
                 if (fluidHolders != null)
                 {
@@ -104,24 +106,6 @@ public class RAIntegration
                         fluids.add(holder.get());
                     });
 
-                    Set<ResourceLocation> tagChildren = tagOwnerships.get(location);
-                    if (tagChildren != null)
-                    {
-                        // Add fluids with each tag child to the fluid list
-                        tagChildren.forEach(tagChild ->
-                        {
-                            Collection<Holder<Fluid>> childHolders = tags.get(tagChild);
-                            if (childHolders != null)
-                            {
-                                childHolders.forEach(childHolder ->
-                                {
-                                    fluids.add(childHolder.get());
-                                });
-                            }
-                        });
-                    }
-
-                    fluidCollections.put(location, fluids);
                     for (Fluid fluid : fluids)
                     {
                         ResourceLocation fluidLocation = BuiltInRegistries.FLUID.getKey(fluid);
@@ -136,6 +120,26 @@ public class RAIntegration
                             unifiedFluids.put(location, fluid);
                         }
                     }
+
+                    Set< ResourceLocation> tagChildren = tagOwnerships.get(location);
+                    if (tagChildren != null)
+                    {
+                        // Add fluids with each tag child to the fluid list
+                        // The unified fluid will NEVER be one of these fluids
+                        tagChildren.forEach(tagChild ->
+                        {
+                            Collection< Holder< Fluid>> childHolders = tags.get(tagChild);
+                            if (childHolders != null)
+                            {
+                                childHolders.forEach(childHolder ->
+                                {
+                                    fluids.add(childHolder.get());
+                                });
+                            }
+                        });
+                    }
+
+                    fluidCollections.put(location, fluids);
                 }
             });
         }
@@ -215,10 +219,10 @@ public class RAIntegration
 
     public static String getReplacementForFluid(String originalFluid)
     {
-        for (Map.Entry<ResourceLocation, Collection<Fluid>> entry : fluidCollections.entrySet())
+        for (Map.Entry< ResourceLocation, Collection< Fluid>> entry : fluidCollections.entrySet())
         {
             ResourceLocation tag = entry.getKey();
-            Collection<Fluid> fluids = entry.getValue();
+            Collection< Fluid> fluids = entry.getValue();
             Fluid unifiedFluid = unifiedFluids.get(tag);
             String unifiedFluidStr = BuiltInRegistries.FLUID.getKey(unifiedFluid).toString();
             for (Fluid holder : fluids)
