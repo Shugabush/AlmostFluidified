@@ -16,22 +16,25 @@ import javax.annotation.Nullable;
 public class FluidUnifyConfig extends Config
 {
 
+    private final List< String> modPriorities;
+    private final List< String> unbakedTags;
+    private final List< String> fluids;
+    private final Map< ResourceLocation, String> priorityOverrides;
+    private final Map< ResourceLocation, Set< ResourceLocation>> tagOwnerships;
+
     public FluidUnifyConfig(
                             List< String> modPriorities,
                             List< String> unbakedTags,
                             List< String> fluids,
-                            Map< ResourceLocation, String> priorityOverrides)
+                            Map< ResourceLocation, String> priorityOverrides,
+                            Map< ResourceLocation, Set< ResourceLocation>> tagOwnerships)
     {
         this.modPriorities = modPriorities;
         this.unbakedTags = unbakedTags;
         this.fluids = fluids;
         this.priorityOverrides = priorityOverrides;
+        this.tagOwnerships = tagOwnerships;
     }
-
-    private List< String> modPriorities;
-    private List< String> unbakedTags;
-    private List< String> fluids;
-    private Map< ResourceLocation, String> priorityOverrides;
 
     @Nullable
     private Set< ResourceLocation> bakedTagsCache;
@@ -44,6 +47,10 @@ public class FluidUnifyConfig extends Config
     public Map< ResourceLocation, String> getPriorityOverrides()
     {
         return Collections.unmodifiableMap(priorityOverrides);
+    }
+
+    public Map<ResourceLocation, Set<ResourceLocation>> getTagOwnerships() {
+        return Collections.unmodifiableMap(tagOwnerships);
     }
 
     public Set< ResourceLocation> bakeTags()
@@ -103,6 +110,7 @@ public class FluidUnifyConfig extends Config
         public static final String TAGS = "tags";
         public static final String FLUIDS = "fluids";
         public static final String PRIORITY_OVERRIDES = "priorityOverrides";
+        public static final String TAG_OWNERSHIPS = "tagOwnerships";
 
         @Override
         public FluidUnifyConfig deserialize(JsonObject json)
@@ -120,11 +128,20 @@ public class FluidUnifyConfig extends Config
                             e -> e.getValue().getAsString()),
                     new HashMap<>());
 
+            Map< ResourceLocation, Set< ResourceLocation>> tagOwnerships = safeGet(
+                    () -> JsonUtils.deserializeMapSet(
+                            json,
+                            TAG_OWNERSHIPS,
+                            e -> new ResourceLocation(e.getKey()),
+                            ResourceLocation::new),
+                    new HashMap<>());
+
             return new FluidUnifyConfig(
                     modPriorities,
                     tags,
                     fluids,
-                    priorityOverrides);
+                    priorityOverrides,
+                    tagOwnerships);
         }
 
         @Override
@@ -140,6 +157,13 @@ public class FluidUnifyConfig extends Config
                 priorityOverrides.addProperty(tag.toString(), mod);
             });
             json.add(PRIORITY_OVERRIDES, priorityOverrides);
+            JsonObject tagOwnerships = new JsonObject();
+            config.tagOwnerships.forEach((parent, child) ->
+            {
+                tagOwnerships.add(parent.toString(),
+                        JsonUtils.toArray(child.stream().map(ResourceLocation::toString).toList()));
+            });
+            json.add(TAG_OWNERSHIPS, tagOwnerships);
 
             return json;
         }

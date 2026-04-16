@@ -5,7 +5,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -35,7 +34,7 @@ public class RAIntegration
             "outputs", "fluidInput", "fluidOutput", "inputFluid", "outputFluid", "content");
 
     // Resource location is the tag, the fluid list represents all fluids that have that tag
-    private static Map< ResourceLocation, List< Fluid>> fluidCollections = new HashMap<>();
+    private static Map< ResourceLocation, Collection<Fluid>> fluidCollections = new HashMap<>();
 
     // Resource location is the tag, the fluid is the unified fluid for that fluid tag
     public static Map< ResourceLocation, Fluid> unifiedFluids = new HashMap<>();
@@ -50,8 +49,6 @@ public class RAIntegration
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::clientSetup);
 
-        modEventBus.addListener(EventPriority.LOWEST, this::afterRegister);
-
         // Most other events are fired on Forge's bus.
         // If we want to use annotations to register event listeners,
         // we need to register our object like this!
@@ -64,6 +61,7 @@ public class RAIntegration
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
+        unifyConfig = Config.load("fluids", new FluidUnifyConfig.Serializer());
         event.enqueueWork(() ->
         {
 
@@ -71,9 +69,6 @@ public class RAIntegration
     }
 
     private void clientSetup(final FMLClientSetupEvent event)
-    {}
-
-    private void afterRegister(FMLCommonSetupEvent event)
     {}
 
     /**
@@ -89,22 +84,42 @@ public class RAIntegration
 
     public static void onTagLoaderReload(Map< ResourceLocation, Collection< Holder< Fluid>>> tags)
     {
-        unifyConfig = Config.load("fluids", new FluidUnifyConfig.Serializer());
-
         Set< ResourceLocation> bakedTags = unifyConfig.bakeAndValidateTags(tags);
 
-        for (String priority : unifyConfig.getModPriorities())
+        List<String> modPriorities = unifyConfig.getModPriorities();
+
+        Map<ResourceLocation, Set<ResourceLocation>> tagOwnerships = unifyConfig.getTagOwnerships();
+
+        for (String priority : modPriorities)
         {
             bakedTags.forEach(location ->
             {
-                Collection< Holder< Fluid>> fluidHolders = tags.get(location);
+                Collection<Holder<Fluid>> fluidHolders = tags.get(location);
+                Collection<Fluid> fluids = new ArrayList<>();
+
                 if (fluidHolders != null)
                 {
-                    List< Fluid> fluids = new ArrayList<>();
                     fluidHolders.forEach(holder ->
                     {
                         fluids.add(holder.get());
                     });
+
+                    Set<ResourceLocation> tagChildren = tagOwnerships.get(location);
+                    if (tagChildren != null)
+                    {
+                        // Add fluids with each tag child to the fluid list
+                        tagChildren.forEach(tagChild ->
+                        {
+                            Collection<Holder<Fluid>> childHolders = tags.get(tagChild);
+                            if (childHolders != null)
+                            {
+                                childHolders.forEach(childHolder ->
+                                {
+                                    fluids.add(childHolder.get());
+                                });
+                            }
+                        });
+                    }
 
                     fluidCollections.put(location, fluids);
                     for (Fluid fluid : fluids)
@@ -112,16 +127,10 @@ public class RAIntegration
                         ResourceLocation fluidLocation = BuiltInRegistries.FLUID.getKey(fluid);
                         String fluidLocationStr = fluidLocation.toString();
 
-                        if (fluidLocationStr.contains("honey"))
-                        {
-                            LOGGER.info("{}, {}", fluidLocationStr, location.toString());
-                        }
-
                         // Flowing fluids generally aren't part of recipes so they don't need to be unified
                         if (fluidLocationStr.contains("flowing"))
                             continue;
 
-                        String temp = fluidLocationStr.split(":")[0];
                         if (fluidLocationStr.split(":")[0].equals(priority) && !unifiedFluids.containsKey(location))
                         {
                             unifiedFluids.put(location, fluid);
@@ -206,14 +215,15 @@ public class RAIntegration
 
     public static String getReplacementForFluid(String originalFluid)
     {
-        for (Map.Entry< ResourceLocation, List< Fluid>> entry : fluidCollections.entrySet())
+        for (Map.Entry<ResourceLocation, Collection<Fluid>> entry : fluidCollections.entrySet())
         {
             ResourceLocation tag = entry.getKey();
-            List< Fluid> fluids = entry.getValue();
+            Collection<Fluid> fluids = entry.getValue();
             Fluid unifiedFluid = unifiedFluids.get(tag);
             String unifiedFluidStr = BuiltInRegistries.FLUID.getKey(unifiedFluid).toString();
-            for (Fluid fluid : fluids)
+            for (Fluid holder : fluids)
             {
+                Fluid fluid = holder;
                 String fluidStr = BuiltInRegistries.FLUID.getKey(fluid).toString();
                 if (fluid != unifiedFluid)
                 {
