@@ -235,15 +235,22 @@ public class RAIntegration
                     {
                         return unifiedFluidStr;
                     }
-                    else if (originalFluid.contains(fluidStr))
+                    // This is if the fluid string may be only part of the original fluid string.
+                    else if (originalFluid.contains(fluidStr + "\"") || originalFluid.contains(fluidStr + "\\"))
                     {
                         return originalFluid.replace(fluidStr, unifiedFluidStr);
                     }
                 }
             }
-            if (originalFluid.contains(tag.toString()))
+            String tagStr = tag.toString();
+            if (originalFluid.equals(tagStr))
             {
-                return originalFluid.replace(tag.toString(), unifiedFluidStr);
+                return unifiedFluidStr;
+            }
+            // This is if the tag string may be only part of the original fluid string.
+            else if (originalFluid.contains(tagStr + "\"") || originalFluid.contains(tagStr + "\\"))
+            {
+                return originalFluid.replace(tagStr, unifiedFluidStr);
             }
         }
         return originalFluid;
