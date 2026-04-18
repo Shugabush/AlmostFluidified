@@ -32,8 +32,10 @@ public class RAIntegration
 
     // A whitelist of properties to check for unification for. If any recipes don't work, check this list and see if the
     // element's property name is in it.
-    static final Set< String> propertyWhitelist = Set.of("tag", "fluid_tag", "fluid", "value", "input", "output", "inputs",
-            "outputs", "fluidInput", "fluidOutput", "inputFluid", "outputFluid", "content", "result", "results", "extraInput", "extraInputs");
+    static final Set< String> propertyWhitelist = Set.of("tag", "fluid_tag", "fluid", "value", "input", "output",
+            "inputs", "ingredient", "ingredients",
+            "outputs", "fluidInput", "fluidOutput", "inputFluid", "outputFluid", "content", "result", "results",
+            "extraInput", "extraInputs");
 
     static final Set< String> propertyBlacklist = Set.of("item", "items", "itemInput", "itemOutput", "itemInputs",
             "itemOutputs");
@@ -43,6 +45,8 @@ public class RAIntegration
 
     // Resource location is the tag, the fluid is the unified fluid for that fluid tag
     public static Map< ResourceLocation, Fluid> unifiedFluids = new HashMap<>();
+
+    public static Map< ResourceLocation, Set< ResourceLocation>> tagOwnerships = new HashMap<>();
 
     @Nullable
     private static FluidUnifyConfig unifyConfig;
@@ -93,7 +97,7 @@ public class RAIntegration
 
         List< String> modPriorities = unifyConfig.getModPriorities();
 
-        Map< ResourceLocation, Set< ResourceLocation>> tagOwnerships = unifyConfig.getTagOwnerships();
+        tagOwnerships = unifyConfig.getTagOwnerships();
 
         for (String priority : modPriorities)
         {
@@ -199,7 +203,7 @@ public class RAIntegration
             while (propertyIterator.hasNext())
             {
                 String currentProperty = propertyIterator.next();
-                if (propertyWhitelist.contains(currentProperty) && !propertyBlacklist.contains(currentProperty))
+                if (!propertyBlacklist.contains(currentProperty) && propertyWhitelist.contains(currentProperty))
                 {
                     JsonElement propertyElement = object.get(currentProperty);
                     JsonElement unifiedPropertyElement = unifyFluidRecipe(propertyElement);
