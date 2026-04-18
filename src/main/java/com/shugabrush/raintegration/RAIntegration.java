@@ -32,8 +32,11 @@ public class RAIntegration
 
     // A whitelist of properties to check for unification for. If any recipes don't work, check this list and see if the
     // element's property name is in it.
-    static final Set< String> propertyWhitelist = Set.of("tag", "fluid", "value", "input", "output", "inputs",
-            "outputs", "fluidInput", "fluidOutput", "inputFluid", "outputFluid", "content", "result");
+    static final Set< String> propertyWhitelist = Set.of("tag", "fluid_tag", "fluid", "value", "input", "output", "inputs",
+            "outputs", "fluidInput", "fluidOutput", "inputFluid", "outputFluid", "content", "result", "results", "extraInput", "extraInputs");
+
+    static final Set< String> propertyBlacklist = Set.of("item", "items", "itemInput", "itemOutput", "itemInputs",
+            "itemOutputs");
 
     // Resource location is the tag, the fluid list represents all fluids that have that tag
     private static Map< ResourceLocation, Collection< Fluid>> fluidCollections = new HashMap<>();
@@ -196,14 +199,14 @@ public class RAIntegration
             while (propertyIterator.hasNext())
             {
                 String currentProperty = propertyIterator.next();
-                if (propertyWhitelist.contains(currentProperty))
+                if (propertyWhitelist.contains(currentProperty) && !propertyBlacklist.contains(currentProperty))
                 {
                     JsonElement propertyElement = object.get(currentProperty);
                     JsonElement unifiedPropertyElement = unifyFluidRecipe(propertyElement);
                     if (!propertyElement.toString().equals(unifiedPropertyElement.toString()))
                     {
                         object.remove(currentProperty);
-                        if (currentProperty.equals("tag"))
+                        if (currentProperty.equals("tag") || currentProperty == "fluid_tag")
                         {
                             currentProperty = "fluid";
                         }
