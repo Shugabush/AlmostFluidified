@@ -7,6 +7,7 @@ import net.minecraft.world.level.material.Fluid;
 
 import com.almostreliable.unified.utils.Utils;
 import com.shugabrush.raintegration.RAIntegration;
+import com.shugabrush.raintegration.unification.utils.FluidTagReloadHandler;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -35,7 +36,8 @@ public class FluidTagLoaderMixin
             try
             {
                 Map< ResourceLocation, Collection< Holder< Fluid>>> tags = Utils.cast(cir.getReturnValue());
-                RAIntegration.onTagLoaderReload(tags);
+                FluidTagReloadHandler.initFluidTags(tags);
+                FluidTagReloadHandler.run();
             }
             catch (Exception e)
             {

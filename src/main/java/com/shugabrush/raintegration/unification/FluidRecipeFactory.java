@@ -4,14 +4,14 @@ import com.google.gson.JsonElement;
 import com.shugabrush.raintegration.unification.recipeunifiers.FluidRecipeUnifier;
 import com.shugabrush.raintegration.unification.recipeunifiers.GregTechFluidRecipeUnifier;
 import com.shugabrush.raintegration.unification.recipeunifiers.IndustrialForegoingFluidRecipeUnifier;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class FluidRecipeFactory
 {
-    private static final Map<String, FluidRecipeUnifier> unifiers = new HashMap<>();
+
+    private static final Map< String, FluidRecipeUnifier> unifiers = new HashMap<>();
 
     public FluidRecipeFactory()
     {

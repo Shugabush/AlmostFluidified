@@ -1,9 +1,9 @@
-package com.shugabrush.raintegration.unification.recipeunifiers;
+package com.shugabrush.raintegration.unification;
 
 import com.shugabrush.raintegration.FluidUnifyConfig;
-import net.minecraft.resources.ResourceLocation;
 
 public class FluidReplacementMap
 {
+
     private FluidUnifyConfig unifyConfig;
 }

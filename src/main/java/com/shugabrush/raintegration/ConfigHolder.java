@@ -3,7 +3,7 @@ package com.shugabrush.raintegration;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 
-import com.shugabrush.raintegration.unification.FluidUnification;
+import com.shugabrush.raintegration.unification.utils.FluidUnification;
 import dev.toma.configuration.Configuration;
 import dev.toma.configuration.config.Config;
 import dev.toma.configuration.config.Configurable;

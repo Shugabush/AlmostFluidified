@@ -1,7 +1,5 @@
 package com.shugabrush.raintegration;
 
-import com.shugabrush.raintegration.unification.FluidRecipeFactory;
-import com.shugabrush.raintegration.unification.FluidReplacementData;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -16,7 +14,11 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import com.almostreliable.unified.config.Config;
+import com.almostreliable.unified.utils.UnifyTag;
 import com.google.gson.*;
+import com.shugabrush.raintegration.unification.FluidRecipeFactory;
+import com.shugabrush.raintegration.unification.FluidReplacementData;
+import com.shugabrush.raintegration.unification.utils.FluidTagReloadHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -98,7 +100,9 @@ public class RAIntegration
         // Testing
         var replacementData = FluidReplacementData.load(tags, unifyConfig);
 
-        Set< ResourceLocation> bakedTags = unifyConfig.bakeAndValidateTags(tags);
+        FluidTagReloadHandler.applyCustomTags(unifyConfig);
+
+        Set< UnifyTag< Fluid>> bakedTags = unifyConfig.bakeAndValidateTags(tags);
 
         List< String> modPriorities = unifyConfig.getModPriorities();
 
@@ -129,7 +133,7 @@ public class RAIntegration
 
                         if (fluidLocationStr.split(":")[0].equals(priority) && !unifiedFluids.containsKey(location))
                         {
-                            unifiedFluids.put(location, fluid);
+                            unifiedFluids.put(location.location(), fluid);
                         }
                     }
 
@@ -151,7 +155,7 @@ public class RAIntegration
                         });
                     }
 
-                    fluidCollections.put(location, fluids);
+                    fluidCollections.put(location.location(), fluids);
                 }
             });
         }
@@ -163,7 +167,7 @@ public class RAIntegration
         FluidRecipeFactory factory = new FluidRecipeFactory();
         recipes.forEach((location, recipe) ->
         {
-            //unifyFluidRecipe(recipe);
+            // unifyFluidRecipe(recipe);
             factory.unifyRecipe(location.getNamespace(), recipe);
         });
         long endTime = System.nanoTime();
@@ -301,7 +305,8 @@ public class RAIntegration
                     // This is if the fluid string may be only part of the original fluid string.
                     else if (primitiveStr.contains(fluidStr + "\"") || primitiveStr.contains(fluidStr + "\\"))
                     {
-                        return JsonParser.parseString(primitiveStr.replace(fluidStr, unifiedFluidStr)).getAsJsonPrimitive();
+                        return JsonParser.parseString(primitiveStr.replace(fluidStr, unifiedFluidStr))
+                                .getAsJsonPrimitive();
                     }
                 }
             }

@@ -6,7 +6,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.povstalec.sgjourney.common.compatibility.jei.CrystallizerRecipeCategory;
 import net.povstalec.sgjourney.common.recipe.CrystallizerRecipe;
 
-import com.shugabrush.raintegration.unification.ItemUnification;
+import com.shugabrush.raintegration.unification.utils.ItemUnification;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;

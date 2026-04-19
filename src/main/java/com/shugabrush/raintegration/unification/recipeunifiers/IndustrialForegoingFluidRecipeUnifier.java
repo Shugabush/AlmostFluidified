@@ -4,6 +4,7 @@ import java.util.Set;
 
 public class IndustrialForegoingFluidRecipeUnifier extends FluidRecipeUnifier
 {
+
     public IndustrialForegoingFluidRecipeUnifier()
     {
         lookupKeys = Set.of();

@@ -8,7 +8,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-import com.shugabrush.raintegration.unification.ItemUnification;
+import com.shugabrush.raintegration.unification.utils.ItemUnification;
 import dev.architectury.hooks.item.ItemStackHooks;
 import dev.architectury.registry.fuel.FuelRegistry;
 import org.apache.commons.lang3.tuple.Pair;

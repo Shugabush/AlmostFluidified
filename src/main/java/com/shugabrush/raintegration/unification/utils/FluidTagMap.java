@@ -1,4 +1,4 @@
-package com.shugabrush.raintegration.unification;
+package com.shugabrush.raintegration.unification.utils;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -14,16 +14,17 @@ import java.util.function.Predicate;
 
 public class FluidTagMap
 {
-    private final Map<ResourceLocation, Set<ResourceLocation>> tagsToEntries = new HashMap<>();
-    private final Map<ResourceLocation, Set<ResourceLocation>> entriesToTags = new HashMap<>();
 
-    public static FluidTagMap create(Set<ResourceLocation> unifyTags)
+    private final Map< ResourceLocation, Set< ResourceLocation>> tagsToEntries = new HashMap<>();
+    private final Map< ResourceLocation, Set< ResourceLocation>> entriesToTags = new HashMap<>();
+
+    public static FluidTagMap create(Set< ResourceLocation> unifyTags)
     {
         FluidTagMap tagMap = new FluidTagMap();
 
         unifyTags.forEach(ut ->
         {
-            TagKey<Fluid> asTagKey = TagKey.create(Registries.FLUID, ut);
+            TagKey< Fluid> asTagKey = TagKey.create(Registries.FLUID, ut);
             BuiltInRegistries.FLUID.getTagOrEmpty(asTagKey).forEach(holder ->
             {
                 ResourceLocation key = BuiltInRegistries.FLUID.getKey(holder.value());
@@ -34,7 +35,7 @@ public class FluidTagMap
         return tagMap;
     }
 
-    public static FluidTagMap createFromFluidTags(Map<ResourceLocation, Collection<Holder<Fluid>>> tags)
+    public static FluidTagMap createFromFluidTags(Map< ResourceLocation, Collection< Holder< Fluid>>> tags)
     {
         FluidTagMap tagMap = new FluidTagMap();
 
@@ -47,8 +48,11 @@ public class FluidTagMap
         return tagMap;
     }
 
-    private static void fillEntries(FluidTagMap tagMap, Collection<Holder<Fluid>> holders, ResourceLocation unifyTag, Registry<Fluid> registry) {
-        for (var holder : holders) {
+    private static void fillEntries(FluidTagMap tagMap, Collection< Holder< Fluid>> holders, ResourceLocation unifyTag,
+                                    Registry< Fluid> registry)
+    {
+        for (var holder : holders)
+        {
             holder
                     .unwrapKey()
                     .map(ResourceKey::location)
@@ -57,17 +61,19 @@ public class FluidTagMap
         }
     }
 
-    protected void put(ResourceLocation tag, ResourceLocation entry) {
+    protected void put(ResourceLocation tag, ResourceLocation entry)
+    {
         tagsToEntries.computeIfAbsent(tag, k -> new HashSet<>()).add(entry);
         entriesToTags.computeIfAbsent(entry, k -> new HashSet<>()).add(tag);
     }
 
-    public FluidTagMap filtered(Predicate<ResourceLocation> tagFilter, Predicate<ResourceLocation> entryFilter)
+    public FluidTagMap filtered(Predicate< ResourceLocation> tagFilter, Predicate< ResourceLocation> entryFilter)
     {
         FluidTagMap tagMap = new FluidTagMap();
         tagsToEntries.forEach((tag, fluids) ->
         {
-            if (!tagFilter.test(tag)) return;
+            if (!tagFilter.test(tag))
+                return;
             fluids.stream().filter(entryFilter).forEach(fluid -> tagMap.put(tag, fluid));
         });
         return tagMap;

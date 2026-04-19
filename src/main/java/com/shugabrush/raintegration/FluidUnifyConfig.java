@@ -6,7 +6,9 @@ import net.minecraft.world.level.material.Fluid;
 
 import com.almostreliable.unified.config.Config;
 import com.almostreliable.unified.utils.JsonUtils;
+import com.almostreliable.unified.utils.UnifyTag;
 import com.google.gson.JsonObject;
+import com.shugabrush.raintegration.unification.utils.FluidUnifyTag;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -20,6 +22,7 @@ public class FluidUnifyConfig extends Config
     private final List< String> unbakedTags;
     private final List< String> fluids;
     private final Map< ResourceLocation, String> priorityOverrides;
+    private final Map< ResourceLocation, Set< ResourceLocation>> customTags;
     private final Map< ResourceLocation, Set< ResourceLocation>> tagOwnerships;
 
     public FluidUnifyConfig(
@@ -27,17 +30,19 @@ public class FluidUnifyConfig extends Config
                             List< String> unbakedTags,
                             List< String> fluids,
                             Map< ResourceLocation, String> priorityOverrides,
+                            Map< ResourceLocation, Set< ResourceLocation>> customTags,
                             Map< ResourceLocation, Set< ResourceLocation>> tagOwnerships)
     {
         this.modPriorities = modPriorities;
         this.unbakedTags = unbakedTags;
         this.fluids = fluids;
+        this.customTags = customTags;
         this.priorityOverrides = priorityOverrides;
         this.tagOwnerships = tagOwnerships;
     }
 
     @Nullable
-    private Set< ResourceLocation> bakedTagsCache;
+    private Set< UnifyTag< Fluid>> bakedTagsCache;
 
     public List< String> getModPriorities()
     {
@@ -49,30 +54,35 @@ public class FluidUnifyConfig extends Config
         return Collections.unmodifiableMap(priorityOverrides);
     }
 
+    public Map< ResourceLocation, Set< ResourceLocation>> getCustomTags()
+    {
+        return Collections.unmodifiableMap(customTags);
+    }
+
     public Map< ResourceLocation, Set< ResourceLocation>> getTagOwnerships()
     {
         return Collections.unmodifiableMap(tagOwnerships);
     }
 
-    public Set< ResourceLocation> bakeTags()
+    public Set< UnifyTag< Fluid>> bakeTags()
     {
         return bakeTags($ -> true);
     }
 
-    public Set< ResourceLocation> bakeAndValidateTags(Map< ResourceLocation, Collection< Holder< Fluid>>> tags)
+    public Set< UnifyTag< Fluid>> bakeAndValidateTags(Map< ResourceLocation, Collection< Holder< Fluid>>> tags)
     {
         return bakeTags(tags::containsKey);
     }
 
-    private Set< ResourceLocation> bakeTags(Predicate< ResourceLocation> tagValidator)
+    private Set< UnifyTag< Fluid>> bakeTags(Predicate< ResourceLocation> tagValidator)
     {
         if (bakedTagsCache != null)
         {
             return bakedTagsCache;
         }
 
-        Set< ResourceLocation> result = new HashSet<>();
-        Set< ResourceLocation> wrongTags = new HashSet<>();
+        Set< UnifyTag< Fluid>> result = new HashSet<>();
+        Set< UnifyTag< Fluid>> wrongTags = new HashSet<>();
 
         for (String tag : unbakedTags)
         {
@@ -86,12 +96,14 @@ public class FluidUnifyConfig extends Config
                     continue;
                 }
 
+                UnifyTag< Fluid> t = FluidUnifyTag.fluid(asRL);
+
                 if (!tagValidator.test(asRL))
                 {
-                    wrongTags.add(asRL);
+                    wrongTags.add(t);
                     continue;
                 }
-                result.add(asRL);
+                result.add(t);
             }
         }
         if (!wrongTags.isEmpty())
@@ -111,6 +123,7 @@ public class FluidUnifyConfig extends Config
         public static final String TAGS = "tags";
         public static final String FLUIDS = "fluids";
         public static final String PRIORITY_OVERRIDES = "priorityOverrides";
+        public static final String CUSTOM_TAGS = "customTags";
         public static final String TAG_OWNERSHIPS = "tagOwnerships";
 
         @Override
@@ -137,11 +150,20 @@ public class FluidUnifyConfig extends Config
                             ResourceLocation::new),
                     new HashMap<>());
 
+            Map< ResourceLocation, Set< ResourceLocation>> customTags = safeGet(
+                    () -> JsonUtils.deserializeMapSet(
+                            json,
+                            CUSTOM_TAGS,
+                            e -> new ResourceLocation(e.getKey()),
+                            ResourceLocation::new),
+                    new HashMap<>());
+
             return new FluidUnifyConfig(
                     modPriorities,
                     tags,
                     fluids,
                     priorityOverrides,
+                    customTags,
                     tagOwnerships);
         }
 
@@ -158,6 +180,13 @@ public class FluidUnifyConfig extends Config
                 priorityOverrides.addProperty(tag.toString(), mod);
             });
             json.add(PRIORITY_OVERRIDES, priorityOverrides);
+            JsonObject customTags = new JsonObject();
+            config.customTags.forEach((parent, child) ->
+            {
+                customTags.add(parent.toString(),
+                        JsonUtils.toArray(child.stream().map(ResourceLocation::toString).toList()));
+            });
+            json.add(CUSTOM_TAGS, customTags);
             JsonObject tagOwnerships = new JsonObject();
             config.tagOwnerships.forEach((parent, child) ->
             {

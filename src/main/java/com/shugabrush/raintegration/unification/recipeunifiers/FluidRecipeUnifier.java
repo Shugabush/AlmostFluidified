@@ -10,8 +10,9 @@ import java.util.Set;
 
 public class FluidRecipeUnifier
 {
-    protected Set<String> lookupKeys;
-    protected Set<String> primitiveLookupKeys;
+
+    protected Set< String> lookupKeys;
+    protected Set< String> primitiveLookupKeys;
 
     public FluidRecipeUnifier()
     {

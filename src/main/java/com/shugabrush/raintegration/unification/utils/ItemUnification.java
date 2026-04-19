@@ -1,4 +1,4 @@
-package com.shugabrush.raintegration.unification;
+package com.shugabrush.raintegration.unification.utils;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;

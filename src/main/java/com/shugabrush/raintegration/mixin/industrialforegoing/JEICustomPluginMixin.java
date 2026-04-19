@@ -6,7 +6,7 @@ import net.minecraftforge.fml.ModList;
 
 import com.buuz135.industrial.plugin.jei.JEICustomPlugin;
 import com.buuz135.industrial.plugin.jei.machineproduce.MachineProduceWrapper;
-import com.shugabrush.raintegration.unification.ItemUnification;
+import com.shugabrush.raintegration.unification.utils.ItemUnification;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
