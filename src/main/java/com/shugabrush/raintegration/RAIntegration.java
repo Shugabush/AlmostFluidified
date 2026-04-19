@@ -108,6 +108,7 @@ public class RAIntegration
         FluidTagOwnerships tagOwnerships = new FluidTagOwnerships(
                 unifyConfig.bakeAndValidateTags(tags),
                 unifyConfig.getTagOwnerships());
+        tagOwnerships.applyOwnerships(tags);
 
         FluidReplacementData replacementData = FluidReplacementData.load(tags, unifyConfig, tagOwnerships);
 
