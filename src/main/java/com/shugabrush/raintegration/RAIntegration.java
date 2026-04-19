@@ -1,6 +1,7 @@
 package com.shugabrush.raintegration;
 
 import com.shugabrush.raintegration.unification.FluidRecipeFactory;
+import com.shugabrush.raintegration.unification.FluidReplacementData;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -94,6 +95,9 @@ public class RAIntegration
 
     public static void onTagLoaderReload(Map< ResourceLocation, Collection< Holder< Fluid>>> tags)
     {
+        // Testing
+        var replacementData = FluidReplacementData.load(tags, unifyConfig);
+
         Set< ResourceLocation> bakedTags = unifyConfig.bakeAndValidateTags(tags);
 
         List< String> modPriorities = unifyConfig.getModPriorities();
@@ -258,11 +262,11 @@ public class RAIntegration
             ResourceLocation tag = entry.getKey();
             Collection< Fluid> fluids = entry.getValue();
             Fluid unifiedFluid = unifiedFluids.get(tag);
-            String unifiedFluidStr = BuiltInRegistries.FLUID.getKey(unifiedFluid).toString();
+            String unifiedFluidStr = "\"" + BuiltInRegistries.FLUID.getKey(unifiedFluid).toString() + "\"";
             for (Fluid fluid : fluids)
             {
                 String fluidStr = BuiltInRegistries.FLUID.getKey(fluid).toString();
-                if (fluid != unifiedFluid && primitive.equals((fluidStr)))
+                if (fluid != unifiedFluid && primitive.toString().contains(fluidStr))
                 {
                     return JsonParser.parseString(unifiedFluidStr).getAsJsonPrimitive();
                 }

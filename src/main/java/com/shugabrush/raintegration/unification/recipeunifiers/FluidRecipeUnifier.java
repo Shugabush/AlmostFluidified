@@ -11,10 +11,12 @@ import java.util.Set;
 public class FluidRecipeUnifier
 {
     protected Set<String> lookupKeys;
+    protected Set<String> primitiveLookupKeys;
 
     public FluidRecipeUnifier()
     {
-        lookupKeys = Set.of("tag", "fluid", "inputs", "outputs", "fluidInput", "fluidInputs", "fluidOutput", "fluidOutputs");
+        lookupKeys = Set.of("inputs", "outputs", "fluidInputs", "fluidOutputs");
+        primitiveLookupKeys = Set.of("tag", "fluid", "fluidInput", "fluidOutput");
     }
 
     public void unifyFluidRecipe(JsonElement element)
@@ -22,11 +24,7 @@ public class FluidRecipeUnifier
         if (element == null)
             return;
 
-        if (element instanceof JsonPrimitive primitive)
-        {
-            unifyJsonPrimitive(primitive);
-        }
-        else if (element instanceof JsonArray array)
+        if (element instanceof JsonArray array)
         {
             for (JsonElement arrayElement : array)
             {
@@ -43,12 +41,19 @@ public class FluidRecipeUnifier
                     unifyFluidRecipe(keyElement);
                 }
             }
+            for (String key : primitiveLookupKeys)
+            {
+                if (object.get(key) instanceof JsonPrimitive primitive)
+                {
+                    JsonPrimitive unifiedPrimitive = unifyJsonPrimitive(primitive);
+                    RAIntegration.LOGGER.info(unifiedPrimitive.toString());
+                }
+            }
         }
     }
 
     protected JsonPrimitive unifyJsonPrimitive(JsonPrimitive primitive)
     {
-        RAIntegration.LOGGER.info(primitive.toString());
         return RAIntegration.createContentReplacement(primitive);
     }
 

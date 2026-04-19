@@ -2,6 +2,7 @@ package com.shugabrush.raintegration.unification;
 
 import com.google.gson.JsonElement;
 import com.shugabrush.raintegration.unification.recipeunifiers.FluidRecipeUnifier;
+import com.shugabrush.raintegration.unification.recipeunifiers.GregTechFluidRecipeUnifier;
 import com.shugabrush.raintegration.unification.recipeunifiers.IndustrialForegoingFluidRecipeUnifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,6 +17,7 @@ public class FluidRecipeFactory
     {
         // Mods that need their own custom logic for unifying their fluids
         unifiers.put("industrialforegoing", new IndustrialForegoingFluidRecipeUnifier());
+        unifiers.put("gtceu", new GregTechFluidRecipeUnifier());
     }
 
     // Unifies the recipe using the proper unifier
