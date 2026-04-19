@@ -1,5 +1,6 @@
 package com.shugabrush.raintegration;
 
+import com.shugabrush.raintegration.unification.FluidRecipeFactory;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -33,7 +34,7 @@ public class RAIntegration
     // A whitelist of properties to check for unification for. If any recipes don't work, check this list and see if the
     // element's property name is in it.
     static final Set< String> propertyWhitelist = Set.of("tag", "fluid_tag", "fluid", "value", "input", "output",
-            "inputs", "ingredient", "ingredients",
+            "inputs",
             "outputs", "fluidInput", "fluidOutput", "inputFluid", "outputFluid", "content", "result", "results",
             "extraInput", "extraInputs");
 
@@ -155,10 +156,11 @@ public class RAIntegration
     public static void onRecipeManagerReload(Map< ResourceLocation, JsonElement> recipes)
     {
         long startTime = System.nanoTime();
+        FluidRecipeFactory factory = new FluidRecipeFactory();
         recipes.forEach((location, recipe) ->
         {
-            JsonElement unifiedRecipe = unifyFluidRecipe(recipe);
-            recipes.put(location, unifiedRecipe);
+            //unifyFluidRecipe(recipe);
+            factory.unifyRecipe(location.getNamespace(), recipe);
         });
         long endTime = System.nanoTime();
         long durationMs = (endTime - startTime) / 1_000_000; // Convert to milliseconds
@@ -210,7 +212,7 @@ public class RAIntegration
                     if (!propertyElement.toString().equals(unifiedPropertyElement.toString()))
                     {
                         object.remove(currentProperty);
-                        if (currentProperty.equals("tag") || currentProperty == "fluid_tag")
+                        if (currentProperty.equals("tag") || currentProperty.equals("fluid_tag"))
                         {
                             currentProperty = "fluid";
                         }
@@ -232,21 +234,12 @@ public class RAIntegration
             Collection< Fluid> fluids = entry.getValue();
             Fluid unifiedFluid = unifiedFluids.get(tag);
             String unifiedFluidStr = BuiltInRegistries.FLUID.getKey(unifiedFluid).toString();
-            for (Fluid holder : fluids)
+            for (Fluid fluid : fluids)
             {
-                Fluid fluid = holder;
                 String fluidStr = BuiltInRegistries.FLUID.getKey(fluid).toString();
-                if (fluid != unifiedFluid)
+                if (fluid != unifiedFluid && originalFluid.equals((fluidStr)))
                 {
-                    if (originalFluid.equals((fluidStr)))
-                    {
-                        return unifiedFluidStr;
-                    }
-                    // This is if the fluid string may be only part of the original fluid string.
-                    else if (originalFluid.contains(fluidStr + "\"") || originalFluid.contains(fluidStr + "\\"))
-                    {
-                        return originalFluid.replace(fluidStr, unifiedFluidStr);
-                    }
+                    return unifiedFluidStr;
                 }
             }
             String tagStr = tag.toString();
@@ -254,12 +247,66 @@ public class RAIntegration
             {
                 return unifiedFluidStr;
             }
-            // This is if the tag string may be only part of the original fluid string.
-            else if (originalFluid.contains(tagStr + "\"") || originalFluid.contains(tagStr + "\\"))
-            {
-                return originalFluid.replace(tagStr, unifiedFluidStr);
-            }
         }
         return originalFluid;
+    }
+
+    public static JsonPrimitive createContentReplacement(JsonPrimitive primitive)
+    {
+        for (Map.Entry< ResourceLocation, Collection< Fluid>> entry : fluidCollections.entrySet())
+        {
+            ResourceLocation tag = entry.getKey();
+            Collection< Fluid> fluids = entry.getValue();
+            Fluid unifiedFluid = unifiedFluids.get(tag);
+            String unifiedFluidStr = BuiltInRegistries.FLUID.getKey(unifiedFluid).toString();
+            for (Fluid fluid : fluids)
+            {
+                String fluidStr = BuiltInRegistries.FLUID.getKey(fluid).toString();
+                if (fluid != unifiedFluid && primitive.equals((fluidStr)))
+                {
+                    return JsonParser.parseString(unifiedFluidStr).getAsJsonPrimitive();
+                }
+            }
+            String tagStr = tag.toString();
+            if (primitive.equals(tagStr))
+            {
+                return JsonParser.parseString(unifiedFluidStr).getAsJsonPrimitive();
+            }
+        }
+        return primitive;
+    }
+
+    public static JsonPrimitive replaceAnyFluidsInElement(JsonPrimitive primitive)
+    {
+        String primitiveStr = primitive.toString();
+        for (Map.Entry< ResourceLocation, Collection< Fluid>> entry : fluidCollections.entrySet())
+        {
+            ResourceLocation tag = entry.getKey();
+            Collection< Fluid> fluids = entry.getValue();
+            Fluid unifiedFluid = unifiedFluids.get(tag);
+            String unifiedFluidStr = BuiltInRegistries.FLUID.getKey(unifiedFluid).toString();
+            for (Fluid fluid : fluids)
+            {
+                String fluidStr = BuiltInRegistries.FLUID.getKey(fluid).toString();
+                if (fluid != unifiedFluid)
+                {
+                    if (primitiveStr.equals((fluidStr)))
+                    {
+                        return JsonParser.parseString(unifiedFluidStr).getAsJsonPrimitive();
+                    }
+                    // This is if the fluid string may be only part of the original fluid string.
+                    else if (primitiveStr.contains(fluidStr + "\"") || primitiveStr.contains(fluidStr + "\\"))
+                    {
+                        return JsonParser.parseString(primitiveStr.replace(fluidStr, unifiedFluidStr)).getAsJsonPrimitive();
+                    }
+                }
+            }
+            String tagStr = tag.toString();
+            if (primitiveStr.equals(tagStr))
+            {
+                return JsonParser.parseString(unifiedFluidStr).getAsJsonPrimitive();
+            }
+        }
+        return primitive;
     }
 }
