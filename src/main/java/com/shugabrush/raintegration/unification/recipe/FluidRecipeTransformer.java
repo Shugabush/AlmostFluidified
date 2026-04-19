@@ -1,19 +1,19 @@
 package com.shugabrush.raintegration.unification.recipe;
 
-import com.almostreliable.unified.utils.JsonQuery;
-import com.google.common.base.Stopwatch;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.shugabrush.raintegration.RAIntegration;
-import com.shugabrush.raintegration.api.FluidRecipeUnifierBuilder;
-import com.shugabrush.raintegration.unification.FluidRecipeContext;
 import net.minecraft.resources.ResourceLocation;
 
+import com.almostreliable.unified.utils.JsonQuery;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.shugabrush.raintegration.FluidUnifyConfig;
+import com.shugabrush.raintegration.RAIntegration;
+import com.shugabrush.raintegration.api.FluidRecipeUnifierBuilder;
+import com.shugabrush.raintegration.unification.FluidRecipeContext;
 import com.shugabrush.raintegration.unification.FluidReplacementMap;
 import com.shugabrush.raintegration.unification.recipe.unifier.FluidRecipeHandlerFactory;
 
@@ -46,13 +46,13 @@ public class FluidRecipeTransformer
         return false;
     }
 
-    public Result transformRecipes(Map<ResourceLocation, JsonElement> recipes, boolean skipClientTracking)
+    public Result transformRecipes(Map< ResourceLocation, JsonElement> recipes, boolean skipClientTracking)
     {
         Stopwatch transformationTimer = Stopwatch.createStarted();
         RAIntegration.LOGGER.warn("Recipe count: " + recipes.size());
 
         Result result = new Result();
-        Map<ResourceLocation, List<FluidRecipeLink>> byType = groupRecipesByType(recipes);
+        Map< ResourceLocation, List< FluidRecipeLink>> byType = groupRecipesByType(recipes);
 
         ResourceLocation fcLocation = new ResourceLocation("forge:conditional");
         byType.forEach((type, recipeLinks) ->
@@ -74,24 +74,30 @@ public class FluidRecipeTransformer
         return result;
     }
 
-    private Optional<JsonObject> handleForgeConditionals(FluidRecipeLink recipeLink) {
+    private Optional< JsonObject> handleForgeConditionals(FluidRecipeLink recipeLink)
+    {
         JsonObject copy = recipeLink.getOriginal().deepCopy();
 
-        if (copy.get("recipes") instanceof JsonArray recipes) {
-            for (JsonElement element : recipes) {
+        if (copy.get("recipes") instanceof JsonArray recipes)
+        {
+            for (JsonElement element : recipes)
+            {
                 JsonQuery
                         .of(element, "recipe")
                         .asObject()
                         .map(jsonObject -> FluidRecipeLink.of(recipeLink.getId(), jsonObject))
-                        .ifPresent(temporaryLink -> {
+                        .ifPresent(temporaryLink ->
+                        {
                             unifyRecipe(temporaryLink);
-                            if (temporaryLink.isUnified()) {
+                            if (temporaryLink.isUnified())
+                            {
                                 element.getAsJsonObject().add("recipe", temporaryLink.getUnified());
                             }
                         });
             }
 
-            if (!copy.equals(recipeLink.getOriginal())) {
+            if (!copy.equals(recipeLink.getOriginal()))
+            {
                 recipeLink.setUnified(copy);
                 return Optional.of(copy);
             }
@@ -100,12 +106,12 @@ public class FluidRecipeTransformer
         return Optional.empty();
     }
 
-    private void transformRecipes(List<FluidRecipeLink> recipeLinks, Map<ResourceLocation, JsonElement> allRecipes)
+    private void transformRecipes(List< FluidRecipeLink> recipeLinks, Map< ResourceLocation, JsonElement> allRecipes)
     {
         var unified = unifyRecipes(recipeLinks, r -> allRecipes.put(r.getId(), r.getUnified()));
     }
 
-    public Map<ResourceLocation, List<FluidRecipeLink>> groupRecipesByType(Map<ResourceLocation, JsonElement> recipes)
+    public Map< ResourceLocation, List< FluidRecipeLink>> groupRecipesByType(Map< ResourceLocation, JsonElement> recipes)
     {
         return recipes
                 .entrySet()
@@ -122,11 +128,15 @@ public class FluidRecipeTransformer
         return json.isJsonObject() && hasValidRecipeType(json.getAsJsonObject());
     }
 
-    private LinkedHashSet<FluidRecipeLink> unifyRecipes(List<FluidRecipeLink> recipeLinks, Consumer<FluidRecipeLink> onUnified) {
-        LinkedHashSet<FluidRecipeLink> unified = new LinkedHashSet<>(recipeLinks.size());
-        for (FluidRecipeLink recipeLink : recipeLinks) {
+    private LinkedHashSet< FluidRecipeLink> unifyRecipes(List< FluidRecipeLink> recipeLinks,
+                                                         Consumer< FluidRecipeLink> onUnified)
+    {
+        LinkedHashSet< FluidRecipeLink> unified = new LinkedHashSet<>(recipeLinks.size());
+        for (FluidRecipeLink recipeLink : recipeLinks)
+        {
             unifyRecipe(recipeLink);
-            if (recipeLink.isUnified()) {
+            if (recipeLink.isUnified())
+            {
                 onUnified.accept(recipeLink);
                 unified.add(recipeLink);
             }

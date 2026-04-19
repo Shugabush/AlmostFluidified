@@ -21,7 +21,8 @@ public class FluidReplacementMap
     private final FluidTagOwnerships tagOwnerships;
     private final Set< ResourceLocation> warnings;
 
-    public FluidReplacementMap(FluidUnifyConfig unifyConfig, FluidTagMap tagMap, FluidTagMap flowingTagMap, FluidTagOwnerships tagOwnerships)
+    public FluidReplacementMap(FluidUnifyConfig unifyConfig, FluidTagMap tagMap, FluidTagMap flowingTagMap,
+                               FluidTagOwnerships tagOwnerships)
     {
         this.unifyConfig = unifyConfig;
         this.tagMap = tagMap;

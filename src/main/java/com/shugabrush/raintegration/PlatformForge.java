@@ -1,17 +1,20 @@
 package com.shugabrush.raintegration;
 
-import com.almostreliable.unified.AlmostUnifiedPlatform;
-import com.almostreliable.unified.api.ModConstants;
-import com.shugabrush.raintegration.compat.GregTechFluidRecipeUnifier;
-import com.shugabrush.raintegration.unification.recipe.unifier.FluidRecipeHandlerFactory;
+import com.shugabrush.raintegration.compat.MekanismFluidRecipeUnifier;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
+import com.almostreliable.unified.AlmostUnifiedPlatform;
+import com.almostreliable.unified.api.ModConstants;
+import com.shugabrush.raintegration.compat.GregTechFluidRecipeUnifier;
+import com.shugabrush.raintegration.unification.recipe.unifier.FluidRecipeHandlerFactory;
+
 public class PlatformForge implements Platform
 {
+
     public static final PlatformForge INSTANCE = new PlatformForge();
 
     @Override
@@ -40,5 +43,6 @@ public class PlatformForge implements Platform
     public void bindRecipeHandlers(FluidRecipeHandlerFactory factory)
     {
         factory.registerForMod(ModConstants.GREGTECH_MODERN, new GregTechFluidRecipeUnifier());
+        factory.registerForMod(ModConstants.MEKANISM, new MekanismFluidRecipeUnifier());
     }
 }
