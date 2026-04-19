@@ -1,5 +1,8 @@
 package com.shugabrush.raintegration;
 
+import com.google.common.base.Preconditions;
+import com.shugabrush.raintegration.unification.RAIntegrationRuntime;
+import com.shugabrush.raintegration.unification.recipe.unifier.FluidRecipeHandlerFactory;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +18,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import com.almostreliable.unified.config.Config;
 import com.google.gson.*;
-import com.shugabrush.raintegration.unification.FluidRecipeFactory;
 import com.shugabrush.raintegration.unification.FluidReplacementData;
 import com.shugabrush.raintegration.unification.utils.FluidTagOwnerships;
 import com.shugabrush.raintegration.unification.utils.FluidTagReloadHandler;
@@ -49,6 +51,8 @@ public class RAIntegration
 
     // Resource location is the tag, the fluid is the unified fluid for that fluid tag
     public static Map< ResourceLocation, Fluid> unifiedFluids = new HashMap<>();
+
+    @Nullable private static RAIntegrationRuntime RUNTIME;
 
     @Nullable
     private static FluidUnifyConfig unifyConfig;
@@ -95,6 +99,9 @@ public class RAIntegration
 
     public static void onTagLoaderReload(Map< ResourceLocation, Collection< Holder< Fluid>>> tags)
     {
+        FluidRecipeHandlerFactory recipeHandlerFactory = new FluidRecipeHandlerFactory();
+        PlatformForge.INSTANCE.bindRecipeHandlers(recipeHandlerFactory);
+
         FluidTagReloadHandler.applyCustomTags(unifyConfig);
 
         FluidTagOwnerships tagOwnerships = new FluidTagOwnerships(
@@ -103,7 +110,12 @@ public class RAIntegration
 
         FluidReplacementData replacementData = FluidReplacementData.load(tags, unifyConfig, tagOwnerships);
 
-        List< String> modPriorities = unifyConfig.getModPriorities();
+        RUNTIME = new RAIntegrationRuntime(
+                unifyConfig,
+                replacementData.filteredTagMap(),
+                replacementData.replacementMap(),
+                recipeHandlerFactory
+        );
 
         // for (String priority : modPriorities)
         // {
@@ -160,16 +172,18 @@ public class RAIntegration
 
     public static void onRecipeManagerReload(Map< ResourceLocation, JsonElement> recipes)
     {
-        long startTime = System.nanoTime();
-        FluidRecipeFactory factory = new FluidRecipeFactory();
-        recipes.forEach((location, recipe) ->
-        {
-            // unifyFluidRecipe(recipe);
-            factory.unifyRecipe(location.getNamespace(), recipe);
-        });
-        long endTime = System.nanoTime();
-        long durationMs = (endTime - startTime) / 1_000_000; // Convert to milliseconds
-        LOGGER.info("Fluids unified for recipes in {} ms", durationMs);
+        Preconditions.checkNotNull(RUNTIME, "RAIntegrationRuntime was not loaded correctly");
+        RUNTIME.run(recipes, false);
+//        long startTime = System.nanoTime();
+//        FluidRecipeFactory factory = new FluidRecipeFactory();
+//        recipes.forEach((location, recipe) ->
+//        {
+//            // unifyFluidRecipe(recipe);
+//            factory.unifyRecipe(location.getNamespace(), recipe);
+//        });
+//        long endTime = System.nanoTime();
+//        long durationMs = (endTime - startTime) / 1_000_000; // Convert to milliseconds
+//        LOGGER.info("Fluids unified for recipes in {} ms", durationMs);
     }
 
     public static JsonElement unifyFluidRecipe(JsonElement element)
