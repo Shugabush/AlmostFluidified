@@ -2,7 +2,7 @@ package com.shugabrush.raintegration.unification.recipeunifiers;
 
 import java.util.Set;
 
-public class IndustrialForegoingFluidRecipeUnifier extends FluidRecipeUnifier
+public class IndustrialForegoingFluidRecipeUnifier extends FluidUnifier
 {
 
     public IndustrialForegoingFluidRecipeUnifier()
