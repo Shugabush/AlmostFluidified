@@ -1,12 +1,10 @@
 package com.shugabrush.raintegration.unification.recipeunifiers;
 
-import com.almostreliable.unified.recipe.unifier.GenericRecipeUnifier;
-
 import java.util.Set;
 
 public class GenericFluidRecipeUnifier implements FluidRecipeUnifier
 {
-    public static final GenericRecipeUnifier INSTANCE = new GenericRecipeUnifier();
+    public static final GenericFluidRecipeUnifier INSTANCE = new GenericFluidRecipeUnifier();
     private static final Set<String> INPUT_KEYS = Set.of(
             "input",
             "inputs",
