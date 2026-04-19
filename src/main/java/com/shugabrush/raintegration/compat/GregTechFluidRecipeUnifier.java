@@ -21,6 +21,22 @@ public class GregTechFluidRecipeUnifier implements FluidRecipeUnifier
                 "inputs"
         ).forEach(key ->
                 builder.put(key, (json, ctx) -> createContentReplacement(json, ctx, ctx::createIngredientReplacement)));
+        List.of(
+                "outputs"
+        ).forEach(key ->
+                builder.put(
+                        key,
+                        (json, ctx) -> createContentReplacement(
+                                json,
+                                ctx,
+                                element -> ctx.createResultReplacement(
+                                        element,
+                                        true,
+                                        "fluid",
+                                        "value"
+                                )
+                        )
+                ));
     }
 
     @Nullable

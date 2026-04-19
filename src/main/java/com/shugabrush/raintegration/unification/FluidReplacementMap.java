@@ -17,13 +17,15 @@ public class FluidReplacementMap
 
     private final FluidUnifyConfig unifyConfig;
     private final FluidTagMap tagMap;
+    private final FluidTagMap flowingTagMap;
     private final FluidTagOwnerships tagOwnerships;
     private final Set< ResourceLocation> warnings;
 
-    public FluidReplacementMap(FluidUnifyConfig unifyConfig, FluidTagMap tagMap, FluidTagOwnerships tagOwnerships)
+    public FluidReplacementMap(FluidUnifyConfig unifyConfig, FluidTagMap tagMap, FluidTagMap flowingTagMap, FluidTagOwnerships tagOwnerships)
     {
         this.unifyConfig = unifyConfig;
         this.tagMap = tagMap;
+        this.flowingTagMap = flowingTagMap;
         this.tagOwnerships = tagOwnerships;
         this.warnings = new HashSet<>();
     }

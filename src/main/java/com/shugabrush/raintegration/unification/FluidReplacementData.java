@@ -18,11 +18,14 @@ public record FluidReplacementData(FluidTagMap globalTagMap, FluidTagMap filtere
     public static FluidReplacementData load(Map< ResourceLocation, Collection< Holder< Fluid>>> tags,
                                             FluidUnifyConfig unifyConfig, FluidTagOwnerships tagOwnerships)
     {
-        var globalTagMap = FluidTagMap.createFromFluidTags(tags);
+        var globalTagMaps = FluidTagMap.createFromFluidTags(tags);
+        var globalTagMap = globalTagMaps.get(0);
+        var globalFlowingTagMap = globalTagMaps.get(1);
         var unifyTags = unifyConfig.bakeAndValidateTags(tags);
         var filteredTagMap = globalTagMap.filtered(unifyTags::contains, e -> true);
+        var filteredFlowingTagMap = globalFlowingTagMap.filtered(unifyTags::contains, e -> true);
 
-        var replacementMap = new FluidReplacementMap(unifyConfig, filteredTagMap, tagOwnerships);
+        var replacementMap = new FluidReplacementMap(unifyConfig, filteredTagMap, filteredFlowingTagMap, tagOwnerships);
 
         return new FluidReplacementData(globalTagMap, filteredTagMap, replacementMap);
     }

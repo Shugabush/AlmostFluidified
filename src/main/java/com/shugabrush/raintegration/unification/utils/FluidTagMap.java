@@ -1,5 +1,6 @@
 package com.shugabrush.raintegration.unification.utils;
 
+import com.shugabrush.raintegration.RAIntegration;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -10,8 +11,10 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 
 import com.almostreliable.unified.utils.UnifyTag;
+import net.minecraft.world.level.material.FluidState;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class FluidTagMap
@@ -37,29 +40,37 @@ public class FluidTagMap
         return tagMap;
     }
 
-    public static FluidTagMap createFromFluidTags(Map< ResourceLocation, Collection< Holder< Fluid>>> tags)
+    public static List<FluidTagMap> createFromFluidTags(Map< ResourceLocation, Collection< Holder< Fluid>>> tags)
     {
         FluidTagMap tagMap = new FluidTagMap();
+        FluidTagMap flowingTagMap = new FluidTagMap();
 
         for (var entry : tags.entrySet())
         {
             UnifyTag< Fluid> unifyTag = FluidUnifyTag.fluid(entry.getKey());
-            fillEntries(tagMap, entry.getValue(), unifyTag, BuiltInRegistries.FLUID);
+            fillEntries(tagMap, flowingTagMap, entry.getValue(), unifyTag, BuiltInRegistries.FLUID);
         }
 
-        return tagMap;
+        return List.of(tagMap, flowingTagMap);
     }
 
-    private static void fillEntries(FluidTagMap tagMap, Collection< Holder< Fluid>> holders, UnifyTag< Fluid> unifyTag,
+    private static void fillEntries(FluidTagMap tagMap, FluidTagMap flowingTagMap, Collection< Holder< Fluid>> holders, UnifyTag< Fluid> unifyTag,
                                     Registry< Fluid> registry)
     {
         for (var holder : holders)
         {
+            FluidState fluidState = holder.value().defaultFluidState();
+            Consumer<ResourceLocation> tagMapPutAction = id ->tagMap.put(unifyTag, id);
+            if (!fluidState.isSource())
+            {
+                // This is a flowing fluid, so add it to the flowing tag map instead
+                tagMapPutAction = id -> flowingTagMap.put(unifyTag, id);
+            }
             holder
                     .unwrapKey()
                     .map(ResourceKey::location)
                     .filter(registry::containsKey)
-                    .ifPresent(id -> tagMap.put(unifyTag, id));
+                    .ifPresent(tagMapPutAction);
         }
     }
 
