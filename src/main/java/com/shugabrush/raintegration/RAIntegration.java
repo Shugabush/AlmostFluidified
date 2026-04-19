@@ -1,5 +1,6 @@
 package com.shugabrush.raintegration;
 
+import com.shugabrush.raintegration.unification.utils.FluidTagOwnerships;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -50,8 +51,6 @@ public class RAIntegration
     // Resource location is the tag, the fluid is the unified fluid for that fluid tag
     public static Map< ResourceLocation, Fluid> unifiedFluids = new HashMap<>();
 
-    public static Map< ResourceLocation, Set< ResourceLocation>> tagOwnerships = new HashMap<>();
-
     @Nullable
     private static FluidUnifyConfig unifyConfig;
 
@@ -97,68 +96,68 @@ public class RAIntegration
 
     public static void onTagLoaderReload(Map< ResourceLocation, Collection< Holder< Fluid>>> tags)
     {
-        // Testing
-        var replacementData = FluidReplacementData.load(tags, unifyConfig);
-
         FluidTagReloadHandler.applyCustomTags(unifyConfig);
 
-        Set< UnifyTag< Fluid>> bakedTags = unifyConfig.bakeAndValidateTags(tags);
+        FluidTagOwnerships tagOwnerships = new FluidTagOwnerships(
+                unifyConfig.bakeAndValidateTags(tags),
+                unifyConfig.getTagOwnerships()
+        );
+
+        FluidReplacementData replacementData = FluidReplacementData.load(tags, unifyConfig, tagOwnerships);
 
         List< String> modPriorities = unifyConfig.getModPriorities();
 
-        tagOwnerships = unifyConfig.getTagOwnerships();
-
-        for (String priority : modPriorities)
-        {
-            bakedTags.forEach(location ->
-            {
-                Collection< Holder< Fluid>> fluidHolders = tags.get(location);
-                Collection< Fluid> fluids = new ArrayList<>();
-
-                if (fluidHolders != null)
-                {
-                    fluidHolders.forEach(holder ->
-                    {
-                        fluids.add(holder.get());
-                    });
-
-                    for (Fluid fluid : fluids)
-                    {
-                        ResourceLocation fluidLocation = BuiltInRegistries.FLUID.getKey(fluid);
-                        String fluidLocationStr = fluidLocation.toString();
-
-                        // Flowing fluids generally aren't part of recipes so they don't need to be unified
-                        if (fluidLocationStr.contains("flowing"))
-                            continue;
-
-                        if (fluidLocationStr.split(":")[0].equals(priority) && !unifiedFluids.containsKey(location))
-                        {
-                            unifiedFluids.put(location.location(), fluid);
-                        }
-                    }
-
-                    Set< ResourceLocation> tagChildren = tagOwnerships.get(location);
-                    if (tagChildren != null)
-                    {
-                        // Add fluids with each tag child to the fluid list
-                        // The unified fluid will NEVER be one of these fluids
-                        tagChildren.forEach(tagChild ->
-                        {
-                            Collection< Holder< Fluid>> childHolders = tags.get(tagChild);
-                            if (childHolders != null)
-                            {
-                                childHolders.forEach(childHolder ->
-                                {
-                                    fluids.add(childHolder.get());
-                                });
-                            }
-                        });
-                    }
-
-                    fluidCollections.put(location.location(), fluids);
-                }
-            });
-        }
+//        for (String priority : modPriorities)
+//        {
+//            bakedTags.forEach(location ->
+//            {
+//                Collection< Holder< Fluid>> fluidHolders = tags.get(location);
+//                Collection< Fluid> fluids = new ArrayList<>();
+//
+//                if (fluidHolders != null)
+//                {
+//                    fluidHolders.forEach(holder ->
+//                    {
+//                        fluids.add(holder.get());
+//                    });
+//
+//                    for (Fluid fluid : fluids)
+//                    {
+//                        ResourceLocation fluidLocation = BuiltInRegistries.FLUID.getKey(fluid);
+//                        String fluidLocationStr = fluidLocation.toString();
+//
+//                        // Flowing fluids generally aren't part of recipes so they don't need to be unified
+//                        if (fluidLocationStr.contains("flowing"))
+//                            continue;
+//
+//                        if (fluidLocationStr.split(":")[0].equals(priority) && !unifiedFluids.containsKey(location))
+//                        {
+//                            unifiedFluids.put(location.location(), fluid);
+//                        }
+//                    }
+//
+//                    Set< ResourceLocation> tagChildren = tagOwnerships.get(location);
+//                    if (tagChildren != null)
+//                    {
+//                        // Add fluids with each tag child to the fluid list
+//                        // The unified fluid will NEVER be one of these fluids
+//                        tagChildren.forEach(tagChild ->
+//                        {
+//                            Collection< Holder< Fluid>> childHolders = tags.get(tagChild);
+//                            if (childHolders != null)
+//                            {
+//                                childHolders.forEach(childHolder ->
+//                                {
+//                                    fluids.add(childHolder.get());
+//                                });
+//                            }
+//                        });
+//                    }
+//
+//                    fluidCollections.put(location.location(), fluids);
+//                }
+//            });
+//        }
     }
 
     public static void onRecipeManagerReload(Map< ResourceLocation, JsonElement> recipes)

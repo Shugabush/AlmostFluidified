@@ -1,5 +1,6 @@
 package com.shugabrush.raintegration.unification.utils;
 
+import com.almostreliable.unified.utils.UnifyTag;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -14,17 +15,16 @@ import java.util.function.Predicate;
 
 public class FluidTagMap
 {
+    private final Map< UnifyTag<Fluid>, Set< ResourceLocation>> tagsToEntries = new HashMap<>();
+    private final Map< ResourceLocation, Set< UnifyTag<Fluid>>> entriesToTags = new HashMap<>();
 
-    private final Map< ResourceLocation, Set< ResourceLocation>> tagsToEntries = new HashMap<>();
-    private final Map< ResourceLocation, Set< ResourceLocation>> entriesToTags = new HashMap<>();
-
-    public static FluidTagMap create(Set< ResourceLocation> unifyTags)
+    public static FluidTagMap create(Set< UnifyTag<Fluid>> unifyTags)
     {
         FluidTagMap tagMap = new FluidTagMap();
 
         unifyTags.forEach(ut ->
         {
-            TagKey< Fluid> asTagKey = TagKey.create(Registries.FLUID, ut);
+            TagKey< Fluid> asTagKey = TagKey.create(Registries.FLUID, ut.location());
             BuiltInRegistries.FLUID.getTagOrEmpty(asTagKey).forEach(holder ->
             {
                 ResourceLocation key = BuiltInRegistries.FLUID.getKey(holder.value());
@@ -41,14 +41,14 @@ public class FluidTagMap
 
         for (var entry : tags.entrySet())
         {
-            ResourceLocation unifyTag = entry.getKey();
+            UnifyTag<Fluid> unifyTag = FluidUnifyTag.fluid(entry.getKey());
             fillEntries(tagMap, entry.getValue(), unifyTag, BuiltInRegistries.FLUID);
         }
 
         return tagMap;
     }
 
-    private static void fillEntries(FluidTagMap tagMap, Collection< Holder< Fluid>> holders, ResourceLocation unifyTag,
+    private static void fillEntries(FluidTagMap tagMap, Collection< Holder< Fluid>> holders, UnifyTag<Fluid> unifyTag,
                                     Registry< Fluid> registry)
     {
         for (var holder : holders)
@@ -61,13 +61,7 @@ public class FluidTagMap
         }
     }
 
-    protected void put(ResourceLocation tag, ResourceLocation entry)
-    {
-        tagsToEntries.computeIfAbsent(tag, k -> new HashSet<>()).add(entry);
-        entriesToTags.computeIfAbsent(entry, k -> new HashSet<>()).add(tag);
-    }
-
-    public FluidTagMap filtered(Predicate< ResourceLocation> tagFilter, Predicate< ResourceLocation> entryFilter)
+    public FluidTagMap filtered(Predicate< UnifyTag<Fluid>> tagFilter, Predicate< ResourceLocation> entryFilter)
     {
         FluidTagMap tagMap = new FluidTagMap();
         tagsToEntries.forEach((tag, fluids) ->
@@ -77,5 +71,36 @@ public class FluidTagMap
             fluids.stream().filter(entryFilter).forEach(fluid -> tagMap.put(tag, fluid));
         });
         return tagMap;
+    }
+
+    public int tagSize()
+    {
+        return tagsToEntries.size();
+    }
+
+    public int fluidSize()
+    {
+        return entriesToTags.size();
+    }
+
+    public Set<ResourceLocation> getEntriesByTag(UnifyTag<Fluid> tag)
+    {
+        return Collections.unmodifiableSet(tagsToEntries.getOrDefault(tag, Collections.emptySet()));
+    }
+
+    public Set<UnifyTag<Fluid>> getTagsByEntry(ResourceLocation entry)
+    {
+        return Collections.unmodifiableSet(entriesToTags.getOrDefault(entry, Collections.emptySet()));
+    }
+
+    public Set<UnifyTag<Fluid>> getTags()
+    {
+        return Collections.unmodifiableSet(tagsToEntries.keySet());
+    }
+
+    protected void put(UnifyTag<Fluid> tag, ResourceLocation entry)
+    {
+        tagsToEntries.computeIfAbsent(tag, k -> new HashSet<>()).add(entry);
+        entriesToTags.computeIfAbsent(entry, k -> new HashSet<>()).add(tag);
     }
 }
