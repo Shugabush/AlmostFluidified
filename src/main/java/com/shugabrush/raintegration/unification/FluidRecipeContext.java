@@ -1,5 +1,8 @@
 package com.shugabrush.raintegration.unification;
 
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.material.Fluid;
+
 import com.almostreliable.unified.utils.JsonUtils;
 import com.almostreliable.unified.utils.UnifyTag;
 import com.google.gson.JsonArray;
@@ -7,14 +10,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.shugabrush.raintegration.unification.utils.FluidUtils;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.material.Fluid;
+
+import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
-import java.util.function.Predicate;
 
 public class FluidRecipeContext
 {
+
     private final FluidReplacementMap replacementMap;
     private final JsonObject originalRecipe;
 
@@ -28,23 +31,26 @@ public class FluidRecipeContext
     @Nullable
     public ResourceLocation getReplacementForFluid(@Nullable ResourceLocation fluid)
     {
-        if (fluid == null) return null;
+        if (fluid == null)
+            return null;
 
         return replacementMap.getReplacementForFluid(fluid);
     }
 
     @Nullable
-    public ResourceLocation getPreferredFluidForTag(@Nullable UnifyTag<Fluid> tag, Predicate<ResourceLocation> filter)
+    public ResourceLocation getPreferredFluidForTag(@Nullable UnifyTag< Fluid> tag, Predicate< ResourceLocation> filter)
     {
-        if (tag == null) return null;
+        if (tag == null)
+            return null;
 
         return replacementMap.getPreferredFluidForTag(tag, filter);
     }
 
     @Nullable
-    public UnifyTag<Fluid> getPreferredTagForFluid(@Nullable ResourceLocation fluid)
+    public UnifyTag< Fluid> getPreferredTagForFluid(@Nullable ResourceLocation fluid)
     {
-        if (fluid == null) return null;
+        if (fluid == null)
+            return null;
 
         return replacementMap.getPreferredTagForFluid(fluid);
     }
@@ -55,14 +61,14 @@ public class FluidRecipeContext
         return createIngredientReplacement(
                 element,
                 "value",
-                "ingredient"
-        );
+                "ingredient");
     }
 
     @Nullable
     public JsonElement createIngredientReplacement(@Nullable JsonElement element, String... lookupKeys)
     {
-        if (element == null) return null;
+        if (element == null)
+            return null;
 
         JsonElement copy = element.deepCopy();
         tryCreateIngredientReplacement(copy, lookupKeys);
@@ -71,29 +77,37 @@ public class FluidRecipeContext
 
     private void tryCreateIngredientReplacement(@Nullable JsonElement element, String... lookupKeys)
     {
-        if (element instanceof JsonArray array) {
-            for (JsonElement e : array) {
+        if (element instanceof JsonArray array)
+        {
+            for (JsonElement e : array)
+            {
                 tryCreateIngredientReplacement(e, lookupKeys);
             }
         }
 
-        if (element instanceof JsonObject object) {
-            for (String key : lookupKeys) {
+        if (element instanceof JsonObject object)
+        {
+            for (String key : lookupKeys)
+            {
                 tryCreateIngredientReplacement(object.get(key), lookupKeys);
             }
 
-            if (object.get("tag") instanceof JsonPrimitive primitive) {
-                UnifyTag<Fluid> tag = FluidUtils.toFluidTag(primitive.getAsString());
+            if (object.get("tag") instanceof JsonPrimitive primitive)
+            {
+                UnifyTag< Fluid> tag = FluidUtils.toFluidTag(primitive.getAsString());
                 var ownerTag = replacementMap.getTagOwnerships().getOwnerByTag(tag);
-                if (ownerTag != null) {
+                if (ownerTag != null)
+                {
                     object.addProperty("tag", ownerTag.location().toString());
                 }
             }
 
-            if (object.get("fluid") instanceof JsonPrimitive primitive) {
+            if (object.get("fluid") instanceof JsonPrimitive primitive)
+            {
                 ResourceLocation fluid = ResourceLocation.tryParse(primitive.getAsString());
-                UnifyTag<Fluid> tag = getPreferredTagForFluid(fluid);
-                if (tag != null) {
+                UnifyTag< Fluid> tag = getPreferredTagForFluid(fluid);
+                if (tag != null)
+                {
                     object.remove("fluid");
                     object.addProperty("tag", tag.location().toString());
                 }
@@ -110,7 +124,8 @@ public class FluidRecipeContext
     @Nullable
     public JsonElement createResultReplacement(@Nullable JsonElement element, boolean tagLookup, String... lookupKeys)
     {
-        if (element == null) return null;
+        if (element == null)
+            return null;
 
         JsonElement copy = element.deepCopy();
         JsonElement result = tryCreateResultReplacement(copy, tagLookup, lookupKeys);
@@ -120,31 +135,40 @@ public class FluidRecipeContext
     @Nullable
     private JsonElement tryCreateResultReplacement(JsonElement element, boolean tagLookup, String... lookupKeys)
     {
-        if (element instanceof JsonPrimitive primitive) {
+        if (element instanceof JsonPrimitive primitive)
+        {
             ResourceLocation fluid = ResourceLocation.tryParse(primitive.getAsString());
             ResourceLocation replacement = getReplacementForFluid(fluid);
-            if (replacement != null) {
+            if (replacement != null)
+            {
                 return new JsonPrimitive(replacement.toString());
             }
             return null;
         }
 
         if (element instanceof JsonArray array &&
-                JsonUtils.replaceOn(array, j -> tryCreateResultReplacement(j, tagLookup, lookupKeys))) {
+                JsonUtils.replaceOn(array, j -> tryCreateResultReplacement(j, tagLookup, lookupKeys)))
+        {
             return element;
         }
 
-        if (element instanceof JsonObject object) {
-            for (String key : lookupKeys) {
-                if (JsonUtils.replaceOn(object, key, j -> tryCreateResultReplacement(j, tagLookup, lookupKeys))) {
+        if (element instanceof JsonObject object)
+        {
+            for (String key : lookupKeys)
+            {
+                if (JsonUtils.replaceOn(object, key, j -> tryCreateResultReplacement(j, tagLookup, lookupKeys)))
+                {
                     return element;
                 }
             }
 
             // when tags are used as outputs, replace them with the preferred fluid
-            if (tagLookup && object.get("tag") instanceof JsonPrimitive primitive) {
-                ResourceLocation fluid = getPreferredFluidForTag(FluidUtils.toFluidTag(primitive.getAsString()), $ -> true);
-                if (fluid != null) {
+            if (tagLookup && object.get("tag") instanceof JsonPrimitive primitive)
+            {
+                ResourceLocation fluid = getPreferredFluidForTag(FluidUtils.toFluidTag(primitive.getAsString()),
+                        $ -> true);
+                if (fluid != null)
+                {
                     object.remove("tag");
                     object.addProperty("fluid", fluid.toString());
                 }

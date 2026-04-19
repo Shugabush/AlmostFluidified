@@ -1,4 +1,4 @@
-package com.shugabrush.raintegration.unification.recipeunifiers;
+package com.shugabrush.raintegration.unification.recipe;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

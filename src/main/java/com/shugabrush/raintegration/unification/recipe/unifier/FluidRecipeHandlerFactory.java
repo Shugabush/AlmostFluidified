@@ -1,15 +1,19 @@
-package com.shugabrush.raintegration.unification.recipeunifiers;
+package com.shugabrush.raintegration.unification.recipe.unifier;
 
-import com.shugabrush.raintegration.unification.FluidRecipeContext;
 import net.minecraft.resources.ResourceLocation;
+
+import com.shugabrush.raintegration.api.FluidRecipeUnifier;
+import com.shugabrush.raintegration.api.FluidRecipeUnifierBuilder;
+import com.shugabrush.raintegration.unification.FluidRecipeContext;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class FluidRecipeHandlerFactory
 {
-    private Map<ResourceLocation, FluidRecipeUnifier> transformersByType = new HashMap<>();
-    private Map<String, FluidRecipeUnifier> transformersByModId = new HashMap<>();
+
+    private Map< ResourceLocation, FluidRecipeUnifier> transformersByType = new HashMap<>();
+    private Map< String, FluidRecipeUnifier> transformersByModId = new HashMap<>();
 
     public void fillUnifier(FluidRecipeUnifierBuilder builder, FluidRecipeContext context)
     {
@@ -29,11 +33,13 @@ public class FluidRecipeHandlerFactory
         }
     }
 
-    public void registerForType(ResourceLocation type, FluidRecipeUnifier transformer) {
+    public void registerForType(ResourceLocation type, FluidRecipeUnifier transformer)
+    {
         transformersByType.put(type, transformer);
     }
 
-    public void registerForMod(String mod, FluidRecipeUnifier transformer) {
+    public void registerForMod(String mod, FluidRecipeUnifier transformer)
+    {
         transformersByModId.put(mod, transformer);
     }
 }

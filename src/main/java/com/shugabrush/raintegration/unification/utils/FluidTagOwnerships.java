@@ -81,12 +81,11 @@ public class FluidTagOwnerships
                     RAIntegration.LOGGER.warn(
                             "[FluidTagOwnerships] Reference tag '#{}' of owner tag '#{}' does not exist!",
                             ref.location(),
-                            owner.location()
-                    );
+                            owner.location());
                     continue;
                 }
 
-                for (Holder<Fluid> holder : refHolders)
+                for (Holder< Fluid> holder : refHolders)
                 {
                     holders.add(holder);
                     holder.unwrapKey().ifPresent(key -> changedTags.put(owner.location(), key.location()));
@@ -109,12 +108,12 @@ public class FluidTagOwnerships
         }
     }
 
-    public UnifyTag<Fluid> getOwnerByTag(UnifyTag<Fluid> tag)
+    public UnifyTag< Fluid> getOwnerByTag(UnifyTag< Fluid> tag)
     {
         return refsToOwner.get(tag);
     }
 
-    public Collection<UnifyTag<Fluid>> getRefsByOwner(UnifyTag<Fluid> tag)
+    public Collection< UnifyTag< Fluid>> getRefsByOwner(UnifyTag< Fluid> tag)
     {
         return ownerToRefs.get(tag);
     }

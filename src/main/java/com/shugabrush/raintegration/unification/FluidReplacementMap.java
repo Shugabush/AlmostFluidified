@@ -1,22 +1,24 @@
 package com.shugabrush.raintegration.unification;
 
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.material.Fluid;
+
 import com.almostreliable.unified.utils.UnifyTag;
 import com.shugabrush.raintegration.FluidUnifyConfig;
 import com.shugabrush.raintegration.RAIntegration;
 import com.shugabrush.raintegration.unification.utils.FluidTagMap;
 import com.shugabrush.raintegration.unification.utils.FluidTagOwnerships;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.material.Fluid;
 
 import java.util.*;
 import java.util.function.Predicate;
 
 public class FluidReplacementMap
 {
+
     private final FluidUnifyConfig unifyConfig;
     private final FluidTagMap tagMap;
     private final FluidTagOwnerships tagOwnerships;
-    private final Set<ResourceLocation> warnings;
+    private final Set< ResourceLocation> warnings;
 
     public FluidReplacementMap(FluidUnifyConfig unifyConfig, FluidTagMap tagMap, FluidTagOwnerships tagOwnerships)
     {
@@ -26,19 +28,19 @@ public class FluidReplacementMap
         this.warnings = new HashSet<>();
     }
 
-    public UnifyTag<Fluid> getPreferredTagForFluid(ResourceLocation fluid)
+    public UnifyTag< Fluid> getPreferredTagForFluid(ResourceLocation fluid)
     {
-        Collection<UnifyTag<Fluid>> tags = tagMap.getTagsByEntry(fluid);
+        Collection< UnifyTag< Fluid>> tags = tagMap.getTagsByEntry(fluid);
 
-        if (tags.isEmpty()) return null;
+        if (tags.isEmpty())
+            return null;
 
         if (tags.size() > 1 && !warnings.contains(fluid))
         {
             RAIntegration.LOGGER.warn(
                     "Fluid '{}' has multiple preferred tags '{}' for recipe replacement. This needs to be manually fixed by the user.",
                     fluid,
-                    tags.stream().map(UnifyTag::location).toList()
-            );
+                    tags.stream().map(UnifyTag::location).toList());
             warnings.add(fluid);
         }
 
@@ -47,44 +49,50 @@ public class FluidReplacementMap
 
     public ResourceLocation getReplacementForFluid(ResourceLocation fluid)
     {
-        UnifyTag<Fluid> t = getPreferredTagForFluid(fluid);
-        if (t == null) return null;
+        UnifyTag< Fluid> t = getPreferredTagForFluid(fluid);
+        if (t == null)
+            return null;
 
         return getPreferredFluidForTag(t, i -> true);
     }
 
-    public ResourceLocation getPreferredFluidForTag(UnifyTag<Fluid> tag, Predicate<ResourceLocation> fluidFilter)
+    public ResourceLocation getPreferredFluidForTag(UnifyTag< Fluid> tag, Predicate< ResourceLocation> fluidFilter)
     {
         var tagToLookup = tagOwnerships.getOwnerByTag(tag);
-        if (tagToLookup == null) tagToLookup = tag;
+        if (tagToLookup == null)
+            tagToLookup = tag;
 
-        List<ResourceLocation> fluids = tagMap
+        List< ResourceLocation> fluids = tagMap
                 .getEntriesByTag(tagToLookup)
                 .stream()
                 .filter(fluidFilter)
                 .toList();
 
-        if (fluids.isEmpty()) return null;
+        if (fluids.isEmpty())
+            return null;
 
         ResourceLocation overrideFluid = getOverrideForTag(tagToLookup, fluids);
-        if (overrideFluid != null) return overrideFluid;
+        if (overrideFluid != null)
+            return overrideFluid;
 
         for (String modPriority : unifyConfig.getModPriorities())
         {
             ResourceLocation fluid = findFluidByNamespace(fluids, modPriority);
-            if (fluid != null) return fluid;
+            if (fluid != null)
+                return fluid;
         }
 
         return null;
     }
 
-    private ResourceLocation getOverrideForTag(UnifyTag<Fluid> tag, List<ResourceLocation> fluids)
+    private ResourceLocation getOverrideForTag(UnifyTag< Fluid> tag, List< ResourceLocation> fluids)
     {
         String priorityOverride = unifyConfig.getPriorityOverrides().get(tag.location());
         if (priorityOverride != null)
         {
             ResourceLocation item = findFluidByNamespace(fluids, priorityOverride);
-            if (item != null) return item;
+            if (item != null)
+                return item;
             RAIntegration.LOGGER.warn(
                     "Priority override mod '{}' for tag '{}' does not contain a valid fluid. Falling back to default priority.",
                     priorityOverride,
@@ -93,7 +101,7 @@ public class FluidReplacementMap
         return null;
     }
 
-    private ResourceLocation findFluidByNamespace(List<ResourceLocation> fluids, String namespace)
+    private ResourceLocation findFluidByNamespace(List< ResourceLocation> fluids, String namespace)
     {
         for (ResourceLocation fluid : fluids)
         {

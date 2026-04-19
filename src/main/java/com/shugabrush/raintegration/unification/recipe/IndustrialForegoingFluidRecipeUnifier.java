@@ -1,4 +1,4 @@
-package com.shugabrush.raintegration.unification.recipeunifiers;
+package com.shugabrush.raintegration.unification.recipe;
 
 import java.util.Set;
 

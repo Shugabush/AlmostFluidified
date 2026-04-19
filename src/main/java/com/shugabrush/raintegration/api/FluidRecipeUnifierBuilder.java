@@ -1,23 +1,25 @@
-package com.shugabrush.raintegration.unification.recipeunifiers;
+package com.shugabrush.raintegration.api;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.shugabrush.raintegration.unification.FluidRecipeContext;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 
+import javax.annotation.Nullable;
+
 public class FluidRecipeUnifierBuilder
 {
-    private final Map<String, Entry<?>> consumers = new HashMap<>();
 
-    public void forEachObject(String property, BiFunction<JsonObject, FluidRecipeContext, JsonObject> consumer)
+    private final Map< String, Entry< ?>> consumers = new HashMap<>();
+
+    public void forEachObject(String property, BiFunction< JsonObject, FluidRecipeContext, JsonObject> consumer)
     {
-        BiFunction<JsonArray, FluidRecipeContext, JsonArray> arrayConsumer = (array, ctx) ->
+        BiFunction< JsonArray, FluidRecipeContext, JsonArray> arrayConsumer = (array, ctx) ->
         {
             for (int i = 0; i < array.size(); i++)
             {
@@ -37,12 +39,13 @@ public class FluidRecipeUnifierBuilder
         put(property, JsonArray.class, arrayConsumer);
     }
 
-    public void put(String property, BiFunction<JsonElement, FluidRecipeContext, JsonElement> consumer)
+    public void put(String property, BiFunction< JsonElement, FluidRecipeContext, JsonElement> consumer)
     {
         consumers.put(property, new Entry<>(JsonElement.class, consumer));
     }
 
-    public <T extends JsonElement> void put(String property, Class<T> type, BiFunction<T, FluidRecipeContext, T> consumer)
+    public <T extends JsonElement> void put(String property, Class< T> type,
+                                            BiFunction< T, FluidRecipeContext, T> consumer)
     {
         consumers.put(property, new Entry<>(type, consumer));
     }
@@ -53,7 +56,7 @@ public class FluidRecipeUnifierBuilder
 
         for (var e : json.entrySet())
         {
-            Entry<?> consumer = consumers.get(e.getKey());
+            Entry< ?> consumer = consumers.get(e.getKey());
             if (consumer != null)
             {
                 JsonElement currentElement = e.getValue();
@@ -88,13 +91,14 @@ public class FluidRecipeUnifierBuilder
         return result;
     }
 
-    public Collection<String> getKeys()
+    public Collection< String> getKeys()
     {
         return consumers.keySet();
     }
 
-    private record Entry<T extends JsonElement>(Class<T> expectedType, BiFunction<T, FluidRecipeContext, T> func)
+    private record Entry<T extends JsonElement>(Class< T> expectedType, BiFunction< T, FluidRecipeContext, T> func)
     {
+
         @Nullable
         T apply(JsonElement json, FluidRecipeContext context)
         {

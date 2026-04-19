@@ -1,26 +1,28 @@
-package com.shugabrush.raintegration.unification.recipeunifiers;
+package com.shugabrush.raintegration.unification.recipe.unifier;
+
+import com.shugabrush.raintegration.api.FluidRecipeUnifier;
+import com.shugabrush.raintegration.api.FluidRecipeUnifierBuilder;
 
 import java.util.Set;
 
 public class GenericFluidRecipeUnifier implements FluidRecipeUnifier
 {
+
     public static final GenericFluidRecipeUnifier INSTANCE = new GenericFluidRecipeUnifier();
-    private static final Set<String> INPUT_KEYS = Set.of(
+    private static final Set< String> INPUT_KEYS = Set.of(
             "input",
             "inputs",
             "ingredient",
             "ingredients",
             "inputFluids",
-            "fluidInputs"
-    );
-    private static final Set<String> OUTPUT_KEYS = Set.of(
+            "fluidInputs");
+    private static final Set< String> OUTPUT_KEYS = Set.of(
             "output",
             "outputs",
             "result",
             "results",
             "outputFluids",
-            "fluidOutputs"
-    );
+            "fluidOutputs");
 
     @Override
     public void collectUnifier(FluidRecipeUnifierBuilder builder)
