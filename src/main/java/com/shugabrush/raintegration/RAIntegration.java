@@ -70,8 +70,6 @@ public class RAIntegration
         MinecraftForge.EVENT_BUS.register(this);
 
         DeferredRegister< Fluid> FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS, MOD_ID);
-
-        ConfigHolder.init();
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
@@ -122,5 +120,10 @@ public class RAIntegration
     {
         Preconditions.checkNotNull(RUNTIME, "RAIntegrationRuntime was not loaded correctly");
         RUNTIME.run(recipes, false);
+    }
+
+    public static RAIntegrationRuntime getRuntime()
+    {
+        return RUNTIME;
     }
 }

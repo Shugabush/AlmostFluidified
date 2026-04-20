@@ -4,9 +4,8 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-import com.buuz135.industrial.module.ModuleCore;
 import com.hrznstudio.titanium.component.fluid.FluidTankComponent;
-import com.shugabrush.raintegration.ConfigHolder;
+import com.shugabrush.raintegration.unification.utils.FluidUnification;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,10 +30,10 @@ public class FluidTankComponentMixin extends FluidTank
     @Overwrite
     public int fill(FluidStack resource, FluidAction action)
     {
-        Fluid experienceFluid = ConfigHolder.instance.fluidConfigs.getExperienceFluid();
-        if (experienceFluid != null && resource.getFluid() == ModuleCore.ESSENCE.getSourceFluid().get())
+        Fluid unifiedFluid = FluidUnification.getFluid(resource.getFluid());
+        if (resource.getFluid() != unifiedFluid)
         {
-            resource = new FluidStack(experienceFluid, resource.getAmount());
+            resource = new FluidStack(unifiedFluid, resource.getAmount());
         }
         return tankAction.canFill() ? super.fill(resource, action) : 0;
     }
@@ -42,10 +41,10 @@ public class FluidTankComponentMixin extends FluidTank
     @Overwrite
     public int fillForced(FluidStack resource, FluidAction action)
     {
-        Fluid experienceFluid = ConfigHolder.instance.fluidConfigs.getExperienceFluid();
-        if (experienceFluid != null && resource.getFluid() == ModuleCore.ESSENCE.getSourceFluid().get())
+        Fluid unifiedFluid = FluidUnification.getFluid(resource.getFluid());
+        if (resource.getFluid() != unifiedFluid)
         {
-            resource = new FluidStack(experienceFluid, resource.getAmount());
+            resource = new FluidStack(unifiedFluid, resource.getAmount());
         }
         return super.fill(resource, action);
     }
@@ -53,10 +52,10 @@ public class FluidTankComponentMixin extends FluidTank
     @Overwrite
     private FluidStack drainInternal(FluidStack resource, FluidAction action)
     {
-        Fluid experienceFluid = ConfigHolder.instance.fluidConfigs.getExperienceFluid();
-        if (experienceFluid != null && resource.getFluid() == ModuleCore.ESSENCE.getSourceFluid().get())
+        Fluid unifiedFluid = FluidUnification.getFluid(resource.getFluid());
+        if (resource.getFluid() != unifiedFluid)
         {
-            resource = new FluidStack(experienceFluid, resource.getAmount());
+            resource = new FluidStack(unifiedFluid, resource.getAmount());
         }
 
         if (resource.isEmpty() || !resource.isFluidEqual(fluid))
@@ -66,6 +65,7 @@ public class FluidTankComponentMixin extends FluidTank
         return drain(resource.getAmount(), action);
     }
 
+    @Overwrite
     private FluidStack drainInternal(int maxDrain, FluidAction action)
     {
         int drained = maxDrain;
@@ -85,10 +85,10 @@ public class FluidTankComponentMixin extends FluidTank
     @Overwrite
     public FluidStack drainForced(FluidStack resource, FluidAction action)
     {
-        Fluid experienceFluid = ConfigHolder.instance.fluidConfigs.getExperienceFluid();
-        if (experienceFluid != null && resource.getFluid() == ModuleCore.ESSENCE.getSourceFluid().get())
+        Fluid unifiedFluid = FluidUnification.getFluid(resource.getFluid());
+        if (resource.getFluid() != unifiedFluid)
         {
-            resource = new FluidStack(experienceFluid, resource.getAmount());
+            resource = new FluidStack(unifiedFluid, resource.getAmount());
         }
 
         if (resource.isEmpty() || !resource.isFluidEqual(fluid))
@@ -98,6 +98,7 @@ public class FluidTankComponentMixin extends FluidTank
         return drainForced(resource.getAmount(), action);
     }
 
+    @Overwrite
     public FluidStack drainForced(int maxDrain, FluidAction action)
     {
         return drainInternal(maxDrain, action);

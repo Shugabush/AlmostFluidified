@@ -34,4 +34,9 @@ public class RAIntegrationRuntime
                 replacementMap,
                 unifyConfig).transformRecipes(recipes, skipClientTracking);
     }
+
+    public FluidReplacementMap getReplacementMap()
+    {
+        return replacementMap;
+    }
 }

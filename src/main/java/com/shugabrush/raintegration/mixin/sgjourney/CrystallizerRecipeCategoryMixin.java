@@ -8,7 +8,7 @@ import net.minecraftforge.fml.ModList;
 import net.povstalec.sgjourney.common.compatibility.jei.CrystallizerRecipeCategory;
 import net.povstalec.sgjourney.common.recipe.CrystallizerRecipe;
 
-import com.shugabrush.raintegration.ConfigHolder;
+import com.shugabrush.raintegration.unification.utils.FluidUnification;
 import com.shugabrush.raintegration.unification.utils.ItemUnification;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -47,8 +47,8 @@ public class CrystallizerRecipeCategoryMixin
                at = @At(value = "INVOKE",
                         target = "Lmezz/jei/api/gui/builder/IRecipeSlotBuilder;addFluidStack(Lnet/minecraft/world/level/material/Fluid;J)Lmezz/jei/api/gui/builder/IIngredientAcceptor;"),
                index = 0)
-    private Fluid getUnifiedFluidStack(Fluid originalFluid)
+    private Fluid getUnifiedFluid(Fluid originalFluid)
     {
-        return ConfigHolder.instance.fluidConfigs.getCrystallizerFluid();
+        return FluidUnification.getFluid(originalFluid);
     }
 }

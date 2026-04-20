@@ -4,7 +4,7 @@ import com.gregtechceu.gtceu.common.machine.multiblock.steam.LargeBoilerMachine;
 
 import net.minecraftforge.fluids.FluidStack;
 
-import com.shugabrush.raintegration.ConfigHolder;
+import com.shugabrush.raintegration.unification.utils.FluidUnification;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -22,6 +22,6 @@ public class LargeBoilerMachineMixin
                index = 0)
     private FluidStack unifySteam(FluidStack stack)
     {
-        return new FluidStack(ConfigHolder.instance.fluidConfigs.getBoilerFluid(), stack.getAmount());
+        return new FluidStack(FluidUnification.getFluid(stack.getFluid()), stack.getAmount());
     }
 }
