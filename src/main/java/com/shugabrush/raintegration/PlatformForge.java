@@ -1,5 +1,6 @@
 package com.shugabrush.raintegration;
 
+import com.shugabrush.raintegration.compat.IndustrialForegoingFluidRecipeUnifier;
 import com.shugabrush.raintegration.compat.MekanismFluidRecipeUnifier;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.ModList;
@@ -44,5 +45,6 @@ public class PlatformForge implements Platform
     {
         factory.registerForMod(ModConstants.GREGTECH_MODERN, new GregTechFluidRecipeUnifier());
         factory.registerForMod(ModConstants.MEKANISM, new MekanismFluidRecipeUnifier());
+        factory.registerForMod("industrialforegoing", new IndustrialForegoingFluidRecipeUnifier());
     }
 }

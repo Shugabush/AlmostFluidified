@@ -11,6 +11,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.shugabrush.raintegration.unification.utils.FluidUtils;
 
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
@@ -62,6 +65,15 @@ public class FluidRecipeContext
                 element,
                 "value",
                 "ingredient");
+    }
+
+    public JsonElement createIngredientReplacement(@Nullable JsonElement element, Function<JsonElement, JsonElement> primitiveMethod, String... lookupKeys)
+    {
+        if (element == null)
+            return null;
+
+        JsonElement copy = primitiveMethod.apply(element.deepCopy());
+        return element.equals(copy) ? null : copy;
     }
 
     @Nullable
@@ -133,9 +145,21 @@ public class FluidRecipeContext
     }
 
     @Nullable
+    public JsonElement createResultReplacement(@Nullable JsonElement element, boolean tagLookup, Function<JsonElement, JsonElement> primitiveMethod, String... lookupKeys)
+    {
+        if (element == null)
+            return null;
+
+        JsonElement copy = element.deepCopy();
+        JsonElement result = tryCreateResultReplacement(copy, tagLookup, primitiveMethod, lookupKeys);
+        return element.equals(result) ? null : result;
+    }
+
+    @Nullable
     private JsonElement tryCreateResultReplacement(JsonElement element, boolean tagLookup, String... lookupKeys)
     {
-        if (element instanceof JsonPrimitive primitive)
+        // Default primitive method
+        Function<JsonElement, JsonElement> primitiveMethod = (primitive) ->
         {
             ResourceLocation fluid = ResourceLocation.tryParse(primitive.getAsString());
             ResourceLocation replacement = getReplacementForFluid(fluid);
@@ -144,10 +168,20 @@ public class FluidRecipeContext
                 return new JsonPrimitive(replacement.toString());
             }
             return null;
+        };
+        return tryCreateResultReplacement(element, tagLookup, primitiveMethod, lookupKeys);
+    }
+
+    @Nullable
+    private JsonElement tryCreateResultReplacement(JsonElement element, boolean tagLookup, Function<JsonElement, JsonElement> primitiveMethod, String... lookupKeys)
+    {
+        if (element instanceof JsonPrimitive primitive)
+        {
+            return primitiveMethod.apply(primitive);
         }
 
         if (element instanceof JsonArray array &&
-                JsonUtils.replaceOn(array, j -> tryCreateResultReplacement(j, tagLookup, lookupKeys)))
+                JsonUtils.replaceOn(array, j -> tryCreateResultReplacement(j, tagLookup, primitiveMethod, lookupKeys)))
         {
             return element;
         }
@@ -156,7 +190,7 @@ public class FluidRecipeContext
         {
             for (String key : lookupKeys)
             {
-                if (JsonUtils.replaceOn(object, key, j -> tryCreateResultReplacement(j, tagLookup, lookupKeys)))
+                if (JsonUtils.replaceOn(object, key, j -> tryCreateResultReplacement(j, tagLookup, primitiveMethod, lookupKeys)))
                 {
                     return element;
                 }
