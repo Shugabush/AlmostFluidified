@@ -71,13 +71,6 @@ public class FluidRecipeTransformer
         });
         RAIntegration.LOGGER.warn(
                 "Recipe count afterwards: " + recipes.size() + " (done in " + transformationTimer.stop() + ")");
-        recipes.forEach((location, recipe) ->
-        {
-            if (recipe.toString().contains("thermal"))
-            {
-                RAIntegration.LOGGER.info(recipe.toString());
-            }
-        });
         return result;
     }
 

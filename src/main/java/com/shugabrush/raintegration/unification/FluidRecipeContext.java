@@ -87,7 +87,8 @@ public class FluidRecipeContext
     }
 
     @Nullable
-    public JsonElement createIngredientReplacement(@Nullable JsonElement element, boolean tagLookup, String... lookupKeys)
+    public JsonElement createIngredientReplacement(@Nullable JsonElement element, boolean tagLookup,
+                                                   String... lookupKeys)
     {
         if (element == null)
             return null;
@@ -97,7 +98,8 @@ public class FluidRecipeContext
         return element.equals(copy) ? null : copy;
     }
 
-    public JsonElement createIngredientReplacement(@Nullable JsonElement element, String fluidKey, String tagKey, boolean tagLookup, String... lookupKeys)
+    public JsonElement createIngredientReplacement(@Nullable JsonElement element, String fluidKey, String tagKey,
+                                                   boolean tagLookup, String... lookupKeys)
     {
         if (element == null)
             return null;
@@ -107,7 +109,8 @@ public class FluidRecipeContext
         return element.equals(copy) ? null : copy;
     }
 
-    private void tryCreateIngredientReplacement(@Nullable JsonElement element, boolean tagLookup, String fluidKey, String tagKey, String... lookupKeys)
+    private void tryCreateIngredientReplacement(@Nullable JsonElement element, boolean tagLookup, String fluidKey,
+                                                String tagKey, String... lookupKeys)
     {
         if (element instanceof JsonArray array)
         {
@@ -160,7 +163,8 @@ public class FluidRecipeContext
     }
 
     @Nullable
-    public JsonElement createResultReplacement(@Nullable JsonElement element, String fluidKey, String tagKey, boolean tagLookup)
+    public JsonElement createResultReplacement(@Nullable JsonElement element, String fluidKey, String tagKey,
+                                               boolean tagLookup)
     {
         return createResultReplacement(element, tagLookup, fluidKey, tagKey, "fluid");
     }
@@ -190,7 +194,8 @@ public class FluidRecipeContext
     }
 
     @Nullable
-    private JsonElement tryCreateResultReplacement(JsonElement element, boolean tagLookup, String fluidKey, String tagKey, String... lookupKeys)
+    private JsonElement tryCreateResultReplacement(JsonElement element, boolean tagLookup, String fluidKey,
+                                                   String tagKey, String... lookupKeys)
     {
         // Default primitive method
         Function< JsonElement, JsonElement> primitiveMethod = (primitive) ->
@@ -219,7 +224,8 @@ public class FluidRecipeContext
         }
 
         if (element instanceof JsonArray array &&
-                JsonUtils.replaceOn(array, j -> tryCreateResultReplacement(j, tagLookup, fluidKey, tagKey, primitiveMethod, lookupKeys)))
+                JsonUtils.replaceOn(array,
+                        j -> tryCreateResultReplacement(j, tagLookup, fluidKey, tagKey, primitiveMethod, lookupKeys)))
         {
             return element;
         }

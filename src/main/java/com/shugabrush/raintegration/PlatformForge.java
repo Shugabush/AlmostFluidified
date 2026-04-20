@@ -1,6 +1,5 @@
 package com.shugabrush.raintegration;
 
-import com.shugabrush.raintegration.compat.ThermalFluidRecipeUnifier;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -12,6 +11,7 @@ import com.almostreliable.unified.api.ModConstants;
 import com.shugabrush.raintegration.compat.GregTechFluidRecipeUnifier;
 import com.shugabrush.raintegration.compat.IndustrialForegoingFluidRecipeUnifier;
 import com.shugabrush.raintegration.compat.MekanismFluidRecipeUnifier;
+import com.shugabrush.raintegration.compat.ThermalFluidRecipeUnifier;
 import com.shugabrush.raintegration.unification.recipe.unifier.FluidRecipeHandlerFactory;
 
 public class PlatformForge implements Platform
