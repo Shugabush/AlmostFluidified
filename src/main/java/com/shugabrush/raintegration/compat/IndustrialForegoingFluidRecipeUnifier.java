@@ -1,13 +1,12 @@
 package com.shugabrush.raintegration.compat;
 
+import net.minecraft.resources.ResourceLocation;
+
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
 import com.shugabrush.raintegration.api.FluidRecipeUnifier;
 import com.shugabrush.raintegration.api.FluidRecipeUnifierBuilder;
 import com.shugabrush.raintegration.unification.FluidRecipeContext;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
 
@@ -18,22 +17,17 @@ public class IndustrialForegoingFluidRecipeUnifier implements FluidRecipeUnifier
     public void collectUnifier(FluidRecipeUnifierBuilder builder)
     {
         List.of(
-                "inputFluid"
-        ).forEach(
-                key -> builder.put(
-                        key,
-                        (json, ctx) -> ctx.createIngredientReplacement(
-                                json, object -> replaceFluid(object, ctx), key)
-                )
-        );
+                "inputFluid").forEach(
+                        key -> builder.put(
+                                key,
+                                (json, ctx) -> ctx.createIngredientReplacement(
+                                        json, object -> replaceFluid(object, ctx))));
         List.of(
                 "output").forEach(
-                key -> builder.put(
-                        key,
-                        (json, ctx) -> ctx.createResultReplacement(
-                                json, true, primitive -> replaceFluid(primitive, ctx), key)
-                )
-        );
+                        key -> builder.put(
+                                key,
+                                (json, ctx) -> ctx.createResultReplacement(
+                                        json, true, primitive -> replaceFluid(primitive, ctx), key)));
     }
 
     // Custom method for replacing fluid output
