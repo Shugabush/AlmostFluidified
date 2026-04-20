@@ -1,0 +1,23 @@
+{
+  "required": true,
+  "package": "com.shugabrush.almostfluidified.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "refmap": "mixins.almostfluidified.refmap.json",
+  "mixins": [
+    "gtceu.SteamBoilerMachineMixin",
+    "gtceu.LargeBoilerMachineMixin",
+    "powah.ReactorTileMixin",
+    "sophisticatedcore.XpPumpUpgradeWrapperMixin",
+    "industrialforegoing.FluidTankComponentMixin",
+    "industrialforegoing.LatexProcessingUnitTileMixin",
+    "industrialforegoing.JEICustomPluginMixin",
+    "sgjourney.CrystallizerRecipeCategoryMixin",
+    "sgjourney.StargateJourneyClientModEventsMixin",
+    "almostunified.FluidRecipeManagerMixin",
+    "almostunified.FluidTagLoaderMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -129,7 +129,7 @@ legacyForge {
 }
 jar {
     manifest.attributes([
-            "MixinConfigs": "raintegration.mixins.json"
+            "MixinConfigs": "almostfluidified.mixins.json"
     ])
 }
 
