@@ -5,7 +5,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -77,7 +76,7 @@ public final class FluidHideHelper
         FluidReplacementMap repMap = runtime.getReplacementMap();
         var tagMap = runtime.getFilteredTagMap();
 
-        Multimap< UnifyTag<Fluid>, ResourceLocation> hidingMap = HashMultimap.create();
+        Multimap< UnifyTag< Fluid>, ResourceLocation> hidingMap = HashMultimap.create();
         if (repMap == null || tagMap == null)
             return hidingMap;
         FluidTagOwnerships ownerships = repMap.getTagOwnerships();
@@ -99,7 +98,7 @@ public final class FluidHideHelper
             Set< ResourceLocation> fluidsToHide = getFluidsToHide(unifyTag, fluidsByTag, replacements);
             if (fluidsToHide != null)
             {
-                Set<ResourceLocation> bucketsToHide = new HashSet<>();
+                Set< ResourceLocation> bucketsToHide = new HashSet<>();
                 fluidsToHide.forEach(fluid ->
                 {
                     bucketsToHide.add(BuiltInRegistries.ITEM.getKey(BuiltInRegistries.FLUID.get(fluid).getBucket()));
@@ -159,7 +158,7 @@ public final class FluidHideHelper
     }
 
     private static Set< ResourceLocation> getRefBucketsToHide(UnifyTag< Fluid> unifyTag, FluidTagOwnerships ownerships,
-                                                             Set< ResourceLocation> replacements)
+                                                              Set< ResourceLocation> replacements)
     {
         var refTags = ownerships.getRefsByOwner(unifyTag);
         Set< ResourceLocation> refBucketsToHide = new HashSet<>();
@@ -194,7 +193,7 @@ public final class FluidHideHelper
                 .toList();
     }
 
-    public static Collection<ItemStack> getBucketStacksToHide()
+    public static Collection< ItemStack> getBucketStacksToHide()
     {
         Multimap< UnifyTag< Fluid>, ResourceLocation> hidingMap = createBucketHidingMap();
         if (hidingMap.isEmpty())
