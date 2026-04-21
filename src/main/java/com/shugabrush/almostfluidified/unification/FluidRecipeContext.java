@@ -3,6 +3,7 @@ package com.shugabrush.almostfluidified.unification;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 
+import com.almostreliable.unified.api.recipe.RecipeConstants;
 import com.almostreliable.unified.utils.JsonUtils;
 import com.almostreliable.unified.utils.UnifyTag;
 import com.google.gson.JsonArray;
@@ -36,6 +37,15 @@ public class FluidRecipeContext
             return null;
 
         return replacementMap.getReplacementForFluid(fluid);
+    }
+
+    @Nullable
+    public ResourceLocation getReplacementForBucket(@Nullable ResourceLocation bucket)
+    {
+        if (bucket == null)
+            return null;
+
+        return replacementMap.getReplacementForBucket(bucket);
     }
 
     @Nullable
@@ -112,6 +122,8 @@ public class FluidRecipeContext
     private void tryCreateIngredientReplacement(@Nullable JsonElement element, boolean tagLookup, String fluidKey,
                                                 String tagKey, String... lookupKeys)
     {
+        if (element == null)
+            return;
         if (element instanceof JsonArray array)
         {
             for (JsonElement e : array)
@@ -119,8 +131,7 @@ public class FluidRecipeContext
                 tryCreateIngredientReplacement(e, tagLookup, fluidKey, tagKey, lookupKeys);
             }
         }
-
-        if (element instanceof JsonObject object)
+        else if (element instanceof JsonObject object)
         {
             for (String key : lookupKeys)
             {
@@ -130,7 +141,7 @@ public class FluidRecipeContext
             if (tagLookup && object.get(tagKey) instanceof JsonPrimitive primitive)
             {
                 UnifyTag< Fluid> tag = FluidUtils.toFluidTag(primitive.getAsString());
-                var ownerTag = replacementMap.getTagOwnerships().getOwnerByTag(tag);
+                UnifyTag< Fluid> ownerTag = replacementMap.getTagOwnerships().getOwnerByTag(tag);
                 if (ownerTag != null)
                 {
                     object.addProperty(tagKey, ownerTag.location().toString());
@@ -146,6 +157,23 @@ public class FluidRecipeContext
                     object.remove(fluidKey);
                     object.addProperty(tagKey, tag.location().toString());
                 }
+            }
+            else
+            {
+                tryCreateBucketReplacement(object);
+            }
+        }
+    }
+
+    public void tryCreateBucketReplacement(JsonObject object)
+    {
+        if (object.get(RecipeConstants.ITEM) instanceof JsonPrimitive primitive)
+        {
+            // Replace bucket if applicable
+            ResourceLocation bucket = getReplacementForBucket(ResourceLocation.tryParse(primitive.getAsString()));
+            if (bucket != null)
+            {
+                 object.addProperty(RecipeConstants.ITEM, bucket.toString());
             }
         }
     }

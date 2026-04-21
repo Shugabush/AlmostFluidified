@@ -8,12 +8,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.FluidState;
 
 import com.almostreliable.unified.utils.UnifyTag;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class FluidTagMap
@@ -21,6 +19,8 @@ public class FluidTagMap
 
     private final Map< UnifyTag< Fluid>, Set< ResourceLocation>> tagsToEntries = new HashMap<>();
     private final Map< ResourceLocation, Set< UnifyTag< Fluid>>> entriesToTags = new HashMap<>();
+    private final Map< UnifyTag< Fluid>, Set< ResourceLocation>> flowingTagsToEntries = new HashMap<>();
+    private final Map< ResourceLocation, Set< UnifyTag< Fluid>>> flowingEntriesToTags = new HashMap<>();
 
     public static FluidTagMap create(Set< UnifyTag< Fluid>> unifyTags)
     {
@@ -39,38 +39,30 @@ public class FluidTagMap
         return tagMap;
     }
 
-    public static List< FluidTagMap> createFromFluidTags(Map< ResourceLocation, Collection< Holder< Fluid>>> tags)
+    public static FluidTagMap createFromFluidTags(Map< ResourceLocation, Collection< Holder< Fluid>>> tags)
     {
         FluidTagMap tagMap = new FluidTagMap();
-        FluidTagMap flowingTagMap = new FluidTagMap();
 
         for (var entry : tags.entrySet())
         {
             UnifyTag< Fluid> unifyTag = FluidUnifyTag.fluid(entry.getKey());
-            fillEntries(tagMap, flowingTagMap, entry.getValue(), unifyTag, BuiltInRegistries.FLUID);
+            fillEntries(tagMap, entry.getValue(), unifyTag, BuiltInRegistries.FLUID);
         }
 
-        return List.of(tagMap, flowingTagMap);
+        return tagMap;
     }
 
-    private static void fillEntries(FluidTagMap tagMap, FluidTagMap flowingTagMap, Collection< Holder< Fluid>> holders,
+    private static void fillEntries(FluidTagMap tagMap, Collection< Holder< Fluid>> holders,
                                     UnifyTag< Fluid> unifyTag,
                                     Registry< Fluid> registry)
     {
         for (var holder : holders)
         {
-            FluidState fluidState = holder.value().defaultFluidState();
-            Consumer< ResourceLocation> tagMapPutAction = id -> tagMap.put(unifyTag, id);
-            if (!fluidState.isSource())
-            {
-                // This is a flowing fluid, so add it to the flowing tag map instead
-                tagMapPutAction = id -> flowingTagMap.put(unifyTag, id);
-            }
             holder
                     .unwrapKey()
                     .map(ResourceKey::location)
                     .filter(registry::containsKey)
-                    .ifPresent(tagMapPutAction);
+                    .ifPresent(id -> tagMap.put(unifyTag, id));
         }
     }
 
@@ -106,6 +98,16 @@ public class FluidTagMap
         return Collections.unmodifiableSet(entriesToTags.getOrDefault(entry, Collections.emptySet()));
     }
 
+    public Set< ResourceLocation> getFlowingEntriesByTag(UnifyTag< Fluid> tag)
+    {
+        return Collections.unmodifiableSet(flowingTagsToEntries.getOrDefault(tag, Collections.emptySet()));
+    }
+
+    public Set< UnifyTag< Fluid>> getFlowingTagsByEntry(ResourceLocation entry)
+    {
+        return Collections.unmodifiableSet(flowingEntriesToTags.getOrDefault(entry, Collections.emptySet()));
+    }
+
     public Set< UnifyTag< Fluid>> getTags()
     {
         return Collections.unmodifiableSet(tagsToEntries.keySet());
@@ -113,7 +115,22 @@ public class FluidTagMap
 
     protected void put(UnifyTag< Fluid> tag, ResourceLocation entry)
     {
-        tagsToEntries.computeIfAbsent(tag, k -> new HashSet<>()).add(entry);
-        entriesToTags.computeIfAbsent(entry, k -> new HashSet<>()).add(tag);
+        Fluid fluid = BuiltInRegistries.FLUID.get(entry);
+
+        if (fluid == null)
+            return;
+
+        if (fluid.defaultFluidState().isSource())
+        {
+            // Still fluid entry
+            tagsToEntries.computeIfAbsent(tag, k -> new HashSet<>()).add(entry);
+            entriesToTags.computeIfAbsent(entry, k -> new HashSet<>()).add(tag);
+        }
+        else
+        {
+            // Flowing fluid entry
+            flowingTagsToEntries.computeIfAbsent(tag, k -> new HashSet<>()).add(entry);
+            flowingEntriesToTags.computeIfAbsent(entry, k -> new HashSet<>()).add(tag);
+        }
     }
 }

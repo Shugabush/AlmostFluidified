@@ -12,6 +12,7 @@ import com.shugabrush.almostfluidified.unification.utils.FluidUnifyTag;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
@@ -24,6 +25,7 @@ public class FluidUnifyConfig extends Config
     private final Map< ResourceLocation, String> priorityOverrides;
     private final Map< ResourceLocation, Set< ResourceLocation>> customTags;
     private final Map< ResourceLocation, Set< ResourceLocation>> tagOwnerships;
+    private final Set< Pattern> ignoredFluids;
 
     public FluidUnifyConfig(
                             List< String> modPriorities,
@@ -31,7 +33,8 @@ public class FluidUnifyConfig extends Config
                             List< String> fluids,
                             Map< ResourceLocation, String> priorityOverrides,
                             Map< ResourceLocation, Set< ResourceLocation>> customTags,
-                            Map< ResourceLocation, Set< ResourceLocation>> tagOwnerships)
+                            Map< ResourceLocation, Set< ResourceLocation>> tagOwnerships,
+                            Set< Pattern> ignoredFluids)
     {
         this.modPriorities = modPriorities;
         this.unbakedTags = unbakedTags;
@@ -39,6 +42,7 @@ public class FluidUnifyConfig extends Config
         this.customTags = customTags;
         this.priorityOverrides = priorityOverrides;
         this.tagOwnerships = tagOwnerships;
+        this.ignoredFluids = ignoredFluids;
     }
 
     @Nullable
@@ -116,6 +120,15 @@ public class FluidUnifyConfig extends Config
         return result;
     }
 
+    public boolean includeFluid(ResourceLocation fluid)
+    {
+        for (Pattern pattern : ignoredFluids)
+        {
+            if (pattern.matcher(fluid.toString()).matches()) return false;
+        }
+        return true;
+    }
+
     public static class Serializer extends Config.Serializer< FluidUnifyConfig>
     {
 
@@ -125,6 +138,7 @@ public class FluidUnifyConfig extends Config
         public static final String PRIORITY_OVERRIDES = "priorityOverrides";
         public static final String CUSTOM_TAGS = "customTags";
         public static final String TAG_OWNERSHIPS = "tagOwnerships";
+        public static final String IGNORED_FLUIDS = "ignoredFluids";
 
         @Override
         public FluidUnifyConfig deserialize(JsonObject json)
@@ -158,13 +172,16 @@ public class FluidUnifyConfig extends Config
                             ResourceLocation::new),
                     new HashMap<>());
 
+            Set< Pattern> ignoredFluids = deserializePatterns(json, IGNORED_FLUIDS, List.of());
+
             return new FluidUnifyConfig(
                     modPriorities,
                     tags,
                     fluids,
                     priorityOverrides,
                     customTags,
-                    tagOwnerships);
+                    tagOwnerships,
+                    ignoredFluids);
         }
 
         @Override
@@ -194,6 +211,7 @@ public class FluidUnifyConfig extends Config
                         JsonUtils.toArray(child.stream().map(ResourceLocation::toString).toList()));
             });
             json.add(TAG_OWNERSHIPS, tagOwnerships);
+            serializePatterns(json, IGNORED_FLUIDS, config.ignoredFluids);
 
             return json;
         }
