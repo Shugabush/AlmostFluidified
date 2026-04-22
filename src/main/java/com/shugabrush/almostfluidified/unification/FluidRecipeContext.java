@@ -173,7 +173,7 @@ public class FluidRecipeContext
             ResourceLocation bucket = getReplacementForBucket(ResourceLocation.tryParse(primitive.getAsString()));
             if (bucket != null)
             {
-                 object.addProperty(RecipeConstants.ITEM, bucket.toString());
+                object.addProperty(RecipeConstants.ITEM, bucket.toString());
             }
         }
     }

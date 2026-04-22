@@ -1,6 +1,6 @@
 package com.shugabrush.almostfluidified;
 
-import com.shugabrush.almostfluidified.unification.recipe.unifier.MinecraftRecipeUnifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -14,6 +14,7 @@ import com.shugabrush.almostfluidified.compat.IndustrialForegoingFluidRecipeUnif
 import com.shugabrush.almostfluidified.compat.MekanismFluidRecipeUnifier;
 import com.shugabrush.almostfluidified.compat.ThermalFluidRecipeUnifier;
 import com.shugabrush.almostfluidified.unification.recipe.unifier.FluidRecipeHandlerFactory;
+import com.shugabrush.almostfluidified.unification.recipe.unifier.MinecraftRecipeUnifier;
 
 public class PlatformForge implements Platform
 {
@@ -45,7 +46,7 @@ public class PlatformForge implements Platform
     @Override
     public void bindRecipeHandlers(FluidRecipeHandlerFactory factory)
     {
-        factory.registerForMod("minecraft", new MinecraftRecipeUnifier());
+        factory.registerForType(ResourceLocation.tryParse("minecraft:crafting_shaped"), new MinecraftRecipeUnifier());
         factory.registerForMod(ModConstants.GREGTECH_MODERN, new GregTechFluidRecipeUnifier());
         factory.registerForMod(ModConstants.MEKANISM, new MekanismFluidRecipeUnifier());
         factory.registerForMod("industrialforegoing", new IndustrialForegoingFluidRecipeUnifier());

@@ -124,7 +124,8 @@ public class FluidUnifyConfig extends Config
     {
         for (Pattern pattern : ignoredFluids)
         {
-            if (pattern.matcher(fluid.toString()).matches()) return false;
+            if (pattern.matcher(fluid.toString()).matches())
+                return false;
         }
         return true;
     }
