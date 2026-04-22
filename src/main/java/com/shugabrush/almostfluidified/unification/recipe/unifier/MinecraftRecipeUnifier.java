@@ -20,8 +20,7 @@ public class MinecraftRecipeUnifier implements FluidRecipeUnifier
 
     private JsonElement createReplacement(JsonElement json)
     {
-        String jsonStr = json.toString();
-        if (!jsonStr.contains("bucket")) return null;
+        if (!json.toString().contains("bucket")) return null;
 
         if (json instanceof JsonObject object)
         {
