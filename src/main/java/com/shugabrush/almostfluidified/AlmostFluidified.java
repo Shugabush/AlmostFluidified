@@ -1,10 +1,20 @@
 package com.shugabrush.almostfluidified;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -20,6 +30,7 @@ import com.shugabrush.almostfluidified.unification.FluidReplacementData;
 import com.shugabrush.almostfluidified.unification.recipe.unifier.FluidRecipeHandlerFactory;
 import com.shugabrush.almostfluidified.unification.utils.FluidTagOwnerships;
 import com.shugabrush.almostfluidified.unification.utils.FluidTagReloadHandler;
+import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,24 +68,46 @@ public class AlmostFluidified
     @Nullable
     private static FluidUnifyConfig unifyConfig;
 
+    DeferredRegister< Item> ITEMS;
+    IEventBus modEventBus;
+
     public AlmostFluidified()
     {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener(this::clientSetup);
+        modEventBus.addListener(EventPriority.LOWEST, this::commonSetup);
+        modEventBus.addListener(EventPriority.LOWEST, this::clientSetup);
 
         // Most other events are fired on Forge's bus.
         // If we want to use annotations to register event listeners,
         // we need to register our object like this!
         MinecraftForge.EVENT_BUS.register(this);
 
-        DeferredRegister< Fluid> FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS, MOD_ID);
+        ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
         unifyConfig = Config.load("fluids", new FluidUnifyConfig.Serializer());
+
+        // Register extra buckets
+        for (Fluid fluid : BuiltInRegistries.FLUID.stream().toList())
+        {
+            if (!fluid.isSame(Fluids.EMPTY) && fluid.getBucket().toString().equals("air"))
+            {
+                try
+                {
+                    ITEMS.register(BuiltInRegistries.FLUID.getKey(fluid).getPath() + "_bucket", () -> new BucketItem(fluid, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
+                }
+                catch (Exception e)
+                {
+                    LOGGER.warn(e.getMessage(), e);
+                }
+
+            }
+        }
+        ITEMS.register(modEventBus);
+
         event.enqueueWork(() ->
         {
 

@@ -48,7 +48,6 @@ public class FluidTagMap
             UnifyTag< Fluid> unifyTag = FluidUnifyTag.fluid(entry.getKey());
             fillEntries(tagMap, entry.getValue(), unifyTag, BuiltInRegistries.FLUID);
         }
-
         return tagMap;
     }
 
