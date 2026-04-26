@@ -1,11 +1,12 @@
 package com.shugabrush.almostfluidified.compat;
 
+import net.minecraft.resources.ResourceLocation;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.shugabrush.almostfluidified.api.FluidRecipeUnifier;
 import com.shugabrush.almostfluidified.api.FluidRecipeUnifierBuilder;
 import com.shugabrush.almostfluidified.unification.FluidRecipeContext;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
 
@@ -17,16 +18,16 @@ public class IFEUFluidRecipeUnifier implements FluidRecipeUnifier
     {
         List.of(
                 "inputFluid1", "inputFluid2").forEach(
-                key -> builder.put(
-                        key,
-                        (json, ctx) -> ctx.createIngredientReplacement(
-                                json, object -> replaceFluid(object, ctx))));
+                        key -> builder.put(
+                                key,
+                                (json, ctx) -> ctx.createIngredientReplacement(
+                                        json, object -> replaceFluid(object, ctx))));
         List.of(
                 "output").forEach(
-                key -> builder.put(
-                        key,
-                        (json, ctx) -> ctx.createResultReplacement(
-                                json, true, primitive -> replaceFluid(primitive, ctx), key)));
+                        key -> builder.put(
+                                key,
+                                (json, ctx) -> ctx.createResultReplacement(
+                                        json, true, primitive -> replaceFluid(primitive, ctx), key)));
     }
 
     // Custom method for replacing fluid output

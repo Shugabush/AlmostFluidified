@@ -40,5 +40,8 @@ public class AlmostFluidifiedRuntime
         return replacementMap;
     }
 
-    public FluidTagMap getFilteredTagMap() { return tagMap; }
+    public FluidTagMap getFilteredTagMap()
+    {
+        return tagMap;
+    }
 }

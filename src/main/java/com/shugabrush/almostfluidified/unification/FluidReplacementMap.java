@@ -1,12 +1,8 @@
 package com.shugabrush.almostfluidified.unification;
 
-import com.shugabrush.almostfluidified.unification.utils.FluidUnification;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -16,8 +12,6 @@ import com.shugabrush.almostfluidified.AlmostFluidified;
 import com.shugabrush.almostfluidified.FluidUnifyConfig;
 import com.shugabrush.almostfluidified.unification.utils.FluidTagMap;
 import com.shugabrush.almostfluidified.unification.utils.FluidTagOwnerships;
-import net.minecraftforge.fluids.ForgeFlowingFluid;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -121,7 +115,8 @@ public class FluidReplacementMap
         return null;
     }
 
-    public ResourceLocation getPreferredFlowingFluidForTag(UnifyTag< Fluid> tag, Predicate< ResourceLocation> fluidFilter)
+    public ResourceLocation getPreferredFlowingFluidForTag(UnifyTag< Fluid> tag,
+                                                           Predicate< ResourceLocation> fluidFilter)
     {
         var tagToLookup = tagOwnerships.getOwnerByTag(tag);
         if (tagToLookup == null)
