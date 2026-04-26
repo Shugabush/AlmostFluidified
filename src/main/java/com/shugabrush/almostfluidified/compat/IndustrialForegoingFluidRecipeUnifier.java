@@ -23,7 +23,7 @@ public class IndustrialForegoingFluidRecipeUnifier implements FluidRecipeUnifier
                                 (json, ctx) -> ctx.createIngredientReplacement(
                                         json, object -> replaceFluid(object, ctx))));
         List.of(
-                "outputFluid").forEach(
+                "output").forEach(
                         key -> builder.put(
                                 key,
                                 (json, ctx) -> ctx.createResultReplacement(
