@@ -68,7 +68,6 @@ public class AlmostFluidified
     @Nullable
     private static FluidUnifyConfig unifyConfig;
 
-    DeferredRegister< Item> ITEMS;
     IEventBus modEventBus;
 
     public AlmostFluidified()
@@ -82,31 +81,11 @@ public class AlmostFluidified
         // If we want to use annotations to register event listeners,
         // we need to register our object like this!
         MinecraftForge.EVENT_BUS.register(this);
-
-        ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
         unifyConfig = Config.load("fluids", new FluidUnifyConfig.Serializer());
-
-        // Register extra buckets
-        for (Fluid fluid : BuiltInRegistries.FLUID.stream().toList())
-        {
-            if (!fluid.isSame(Fluids.EMPTY) && fluid.getBucket().toString().equals("air"))
-            {
-                try
-                {
-                    ITEMS.register(BuiltInRegistries.FLUID.getKey(fluid).getPath() + "_bucket", () -> new BucketItem(fluid, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
-                }
-                catch (Exception e)
-                {
-                    LOGGER.warn(e.getMessage(), e);
-                }
-
-            }
-        }
-        ITEMS.register(modEventBus);
 
         event.enqueueWork(() ->
         {
