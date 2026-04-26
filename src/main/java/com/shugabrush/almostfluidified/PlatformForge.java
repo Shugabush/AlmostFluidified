@@ -49,5 +49,6 @@ public class PlatformForge implements Platform
         factory.registerForMod("industrialforegoing", new IndustrialForegoingFluidRecipeUnifier());
         factory.registerForMod("ifeu", new IFEUFluidRecipeUnifier());
         factory.registerForMod("thermal", new ThermalFluidRecipeUnifier());
+        factory.registerForMod("enderio", new EnderIOFluidRecipeUnifier());
     }
 }
