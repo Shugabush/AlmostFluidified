@@ -7,6 +7,7 @@ import java.util.List;
 
 public class EnderIOFluidRecipeUnifier implements FluidRecipeUnifier
 {
+
     @Override
     public void collectUnifier(FluidRecipeUnifierBuilder builder)
     {
