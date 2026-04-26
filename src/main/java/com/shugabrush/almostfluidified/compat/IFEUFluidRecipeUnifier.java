@@ -23,7 +23,7 @@ public class IFEUFluidRecipeUnifier implements FluidRecipeUnifier
                                 (json, ctx) -> ctx.createIngredientReplacement(
                                         json, object -> replaceFluid(object, ctx))));
         List.of(
-                "output").forEach(
+                "outputFluid").forEach(
                         key -> builder.put(
                                 key,
                                 (json, ctx) -> ctx.createResultReplacement(
