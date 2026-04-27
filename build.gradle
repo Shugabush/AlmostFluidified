@@ -192,6 +192,9 @@ dependencies {
 
     // The Bumblezone
     modImplementation("com.telepathicgrunt.the_bumblezone.neoforge:the_bumblezone-${the_bumblezone_version}+${minecraft_version}-forge")
+
+    // Ender IO
+    modImplementation("com.enderio:EnderIO-${minecraft_version}-${enderio_version}-beta-all")
 }
 
 // See com.example.examplemod.mixin.DummyMixin for information about mixins
